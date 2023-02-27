@@ -35,7 +35,7 @@ Input data and prevalence estimates of long COVID. (A) Estimated symptomatic inf
 
 The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
 
-<img src="figs/map_prevalence.jpg" width="500" height="500">
+<img src="figs/map_prevalence.jpg" width="600" height="300">
 
 The relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
 
