@@ -22,4 +22,4 @@ Figure 1. Model diagram showing the progression between states. Non-hospitalized
 
 Here we use a stochastic compartmental model to estimate the burden of long COVID. Each compartment contains 8 age categories, 5 race/ethnicity groups, 3 vaccination categories and 2 sexes, as well as an unknown category for missing information for each group. This results in 162 sub compartments per compartment. The number of sub-compartments within each compartment is due to the available data on cases and hospitalizations, and probabilities of long COVID. 
 
-The size of these compartments is flexible and change automatically dependent on the dimensions and names of the case and hospitlization data provided to the model (the files starting with hosp_ and nonhosp_ found in data/processed/case_hospitalization_data/).
+The size of these compartments is flexible and change automatically dependent on the dimensions and names of the [case](data/processed/case_hospitalization_data/nonhosp_case_age_sex_race_time_all_counties_20230222.rds) and [hospitalization](data/processed/hosp_case_age_sex_race_time_all_counties_20230222.rds) data provided to the model.
