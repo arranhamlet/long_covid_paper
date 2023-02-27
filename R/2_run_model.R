@@ -46,7 +46,7 @@ model_data <- prepare_data_for_model(
   #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties
-  county_or_total = "total")
+  county_or_total = "county")
 
 #Run model
 model <- odin("odin/long_covid_model_stochastic_county.R")
