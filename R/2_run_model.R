@@ -65,5 +65,6 @@ year_week_average <- model_results %>%
                           .names = "{.fn}_{.col}"))
 
 #Export results
-export(year_week_average,
-       here("data", "processed", "model_predictions", paste0(if(model_data$counties == 1) "total" else "county", "_model_run_", gsub("-", "", Sys.Date()), ".csv")))
+write.csv(year_week_average,
+       here("data", "processed", "model_predictions", paste0(if(model_data$num_counties == 1) "total" else "county", "_model_run_", gsub("-", "", Sys.Date()), ".csv")),
+       row.names = FALSE)
