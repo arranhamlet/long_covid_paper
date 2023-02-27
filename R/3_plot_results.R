@@ -25,7 +25,7 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
 #Load functions
 invisible(sapply(list.files("R/functions/", full.names = T), function(x) source(x)))
 
-#Load age data
+#Load age data - using import list because we want the 2nd page of a xlsx file
 age_data_raw <- import_list(here("data", "raw", "demographic", "ofm_pop_sade_state_2010_to_2020.xlsx"))[[2]]
 
 #Load and clean Symptom prevalence
