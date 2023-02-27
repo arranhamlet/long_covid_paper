@@ -100,7 +100,8 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
                                      align = "v", 
                                      labels = c("A", "B"))
   
-  input_prevalence_plot
+  print(input_prevalence_plot)
   
+  input_prevalence_plot
   
 }

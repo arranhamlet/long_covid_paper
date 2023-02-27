@@ -1,30 +1,30 @@
 
-pretty_format_model_breakdown <- function(model_run_all,
+pretty_format_model_breakdown <- function(model_estimates,
                                           pulse_data,
-                                          pop_data,
-                                          sex_pop_agg,
-                                          race_pop_agg,
+                                          subgroup_prevalence,
+                                          state_population,
+                                          adult_population,
                                           cost_per_disabled = 15068){
   
   #Subset to final timepoint all groups
-  final_timepoint_all <- subset(model_run_all, county == "all" & timestep == max(timestep))
+  final_timepoint_all <- subset(model_estimates, county == "all" & timestep == max(timestep))
   
   #Aggregate to age only
-  model_run_age <- model_run_all %>%
+  model_run_age <- subgroup_prevalence %>%
     filter(age_group %in% c("0-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+")) %>%
     group_by(age_group, timestep) %>%
     summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
     left_join(pop_data, by = "age_group")
   
   #Aggregate to sex only
-  model_run_sex <- model_run_all %>%
+  model_run_sex <- subgroup_prevalence %>%
     group_by(sex, timestep) %>%
     summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
     left_join(sex_pop_agg, by = c("sex" = "category")) %>%
     group_by(sex)
   
   #Aggregate to race/ethnicity only
-  model_run_race <- model_run_all %>%
+  model_run_race <- subgroup_prevalence %>%
     filter(race %in% c("Two or more races + Other races, not Hispanic", "Asian alone, not Hispanic",                    
                        "Black alone, not Hispanic", "Hispanic or Latino (may be of any race)",    
                        "White alone, not Hispanic")) %>%
@@ -64,22 +64,22 @@ pretty_format_model_breakdown <- function(model_run_all,
   #Text for end prevalences
   end_df <- data.frame(category = "All",
                        key = c("All", "18+"),
-                       value = c(paste0(format(round(median(subset(final_timepoint_all, age_group == "all")$mid_all_long_inc_perm/sum(state_demog_agg$population) * 100), 1), nsmall = 1),
+                       value = c(paste0(format(round(median(subset(final_timepoint_all, age_group == "all")$mid_all_long_inc_perm/state_population * 100), 1), nsmall = 1),
                                         "% (95% CI ",
-                                        format(round(median(subset(final_timepoint_all, age_group == "all")$low_all_long_inc_perm/sum(state_demog_agg$population) * 100), 1), nsmall = 1),
+                                        format(round(median(subset(final_timepoint_all, age_group == "all")$low_all_long_inc_perm/state_population * 100), 1), nsmall = 1),
                                         " - ",
-                                        format(round(median(subset(final_timepoint_all, age_group == "all")$high_all_long_inc_perm/sum(state_demog_agg$population) * 100), 1), nsmall = 1),
+                                        format(round(median(subset(final_timepoint_all, age_group == "all")$high_all_long_inc_perm/state_population * 100), 1), nsmall = 1),
                                         ")"),
-                                 paste0(format(round(median(subset(final_timepoint_all, age_group == "18+")$mid_all_long_inc_perm/sum(state_demog_agg$population) * (1 - 0.217) *  100), 1), nsmall = 1),
+                                 paste0(format(round(median(subset(final_timepoint_all, age_group == "18+")$mid_all_long_inc_perm/adult_population *  100), 1), nsmall = 1),
                                         "% (95% CI ",
-                                        format(round(median(subset(final_timepoint_all, age_group == "18+")$low_all_long_inc_perm/sum(state_demog_agg$population) * (1 - 0.217) * 100), 1), nsmall = 1),
+                                        format(round(median(subset(final_timepoint_all, age_group == "18+")$low_all_long_inc_perm/adult_population * 100), 1), nsmall = 1),
                                         " - ",
-                                        format(round(median(subset(final_timepoint_all, age_group == "18+")$high_all_long_inc_perm/sum(state_demog_agg$population) * (1 - 0.217) *  100), 1), nsmall = 1),
+                                        format(round(median(subset(final_timepoint_all, age_group == "18+")$high_all_long_inc_perm/adult_population *  100), 1), nsmall = 1),
                                         ")"))
   )
   
   #Sex breakdown end prevalence
-  sex_end <- as.data.frame(subset(model_run_sex, timestep == max(timestep))) %>%
+  sex_end <- as.data.frame(subset(subgroup_prevalence, timestep == max(timestep))) %>%
     subset(sex %in% c("Female", "Male"))
   
   sex_df <- data.frame(
@@ -93,7 +93,7 @@ pretty_format_model_breakdown <- function(model_run_all,
          ")")
   )
   
-  age_end <- as.data.frame(subset(model_run_age, timestep == max(timestep)))
+  age_end <- as.data.frame(subset(subgroup_prevalence, aggregate_type == "age_group" & timestep == max(timestep)))
   
   age_df <- data.frame(
     category = "Age",
@@ -106,7 +106,7 @@ pretty_format_model_breakdown <- function(model_run_all,
                    ")")
   )
   
-  race_end <- as.data.frame(subset(model_run_race, timestep == max(timestep)))
+  race_end <- as.data.frame(subset(subgroup_prevalence, aggregate_type == "race_ethnicity" & timestep == max(timestep)))
   
   race_df <- data.frame(
     category = "Race",
@@ -119,7 +119,9 @@ pretty_format_model_breakdown <- function(model_run_all,
          ")", sep = "")
   )
   
-  df <- rbind(end_df, age_df, sex_df, race_df, disabled_df)
+  df <- rbind(end_df, age_df, sex_df, race_df, disabled_df) %>%
+    mutate(last_timepoint = max(subgroup_prevalence$timestep)) %>%
+    dplyr::select(last_timepoint, category, key, value)
   
   text_results <- data.frame(
     section = c("18+ prevalence and disabeled", "Sex, age, race"),
