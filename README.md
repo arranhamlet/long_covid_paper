@@ -43,7 +43,7 @@ The relative prevalence of long COVID by county in Washington Statea t the final
 
 ![Model diagram showing the progression between states](img/diagram.png)
 
-Figure 1. Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments LNH¬ and LH respectively. These progress to either recovered, R, or unrecovered, U with the probability αNH and αH or βNH or βH respectively.
+Figure 1. Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments L<sub>NH</sub> and L<sub>H</sub> respectively. These progress to either recovered, R, or unrecovered, U with the probability α<sub>NH</sub> and α<sub>H</sub> or β<sub>NH</sub> or β<sub>H</sub> respectively.
 
 Here we use a stochastic compartmental model to estimate the burden of long COVID. Each compartment contains 8 age categories, 5 race/ethnicity groups, 3 vaccination categories and 2 sexes, as well as an unknown category for missing information for each group. This results in 162 sub compartments per compartment. The number of sub-compartments within each compartment is due to the available data on cases and hospitalizations, and probabilities of long COVID. 
 
