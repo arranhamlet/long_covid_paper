@@ -11,13 +11,13 @@ There are three main sections to using the model in this walkthrough, all found 
 
 # Fitting the model
 
-This is carried out using the file "R/1_fit_model_to_data.R". The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optim()` from the **stats** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
+This is carried out using the file [1_fit_model_to_data.R](R/1_fit_model_to_data.R). The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optim()` from the **stats** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
 
 The results of this process are then saved and used in the next section.
 
 # Running the model
 
-The user specifies the parameters they would like to vary using [Latin Hypercube Sampling](https://en.wikipedia.org/wiki/Latin_hypercube_sampling) to explore variation in the parameter. This allows us to explore a wide range of different values for each parameter specified, and captures some of the uncertainty that exists in this rapidly changing field of study.
+Using [2_run_model.R](R/2_run_model.R) the user specifies the parameters they would like to vary using [Latin Hypercube Sampling](https://en.wikipedia.org/wiki/Latin_hypercube_sampling) to explore variation in the parameter. This allows us to explore a wide range of different values for each parameter specified, and captures some of the uncertainty that exists in this rapidly changing field of study.
 
 After specifying the baseline parameters, the user runs the model using the function `run_odin_model()`. This will iterate through each of the LHC samples and produce estimates of the long COVID burden each time (and a plot showing a visual comparison).
 
