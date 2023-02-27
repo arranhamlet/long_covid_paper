@@ -2,11 +2,10 @@
 run_odin_model <- function(model_data, adult_population){
   
   #Loop through all runs of the latin hypercube
+  first_time <- Sys.time()
+  
   rbindlist(sapply(1:model_data$number, function(a){
     set.seed(a)
-    
-    if(a == 1) first_time <- Sys.time()
-    time_inside_1 <- Sys.time()
     
     #Set up vaccination
     model_data$age_sex_race_vaccination_array <- sweep(model_data$age_sex_race_vaccination_array, 4, c(model_data$latin_hypercube$vaccination_impact[a], median(c(model_data$latin_hypercube$vaccination_impact[a], 1)), model_data$latin_hypercube$vaccination_impact[a], 1), "*")
@@ -67,7 +66,5 @@ run_odin_model <- function(model_data, adult_population){
     cleaned_model_results
     
   }, simplify = FALSE))
-  
-  
   
 }

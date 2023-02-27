@@ -138,14 +138,7 @@ prepare_data_for_model <- function(LHC_param_names = NA, #The names of the param
     }
     
     colnames(latin_hypercube) <- names(potential_LHC_values)
-    
-    #Plot outputs
-    LHC_value_for_plot <- model_data$latin_hypercube %>% 
-      rownames_to_column() %>% 
-      gather(key = "Parameter", value = "LHC_value", -rowname) %>%
-      group_by(Parameter) %>%
-      mutate(LHC_value_normalised = (LHC_value - min(LHC_value))/(max(LHC_value) - min(LHC_value)))
-    
+
   } else {
     latin_hypercube <- NULL
   }

@@ -42,7 +42,7 @@ model_data <- prepare_data_for_model(
                        0.353,
                        4/3),
   #Specify the number of LHC samples
-  number = 10,
+  number = 2,
   #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties
@@ -64,5 +64,7 @@ year_week_average <- model_results %>%
                                       high = ~quantile(., 0.975, na.rm = T)),
                           .names = "{.fn}_{.col}"))
 
-export(year_week_average,
-       here("data", "processed", "model_predictions", paste0(if(model_data$counties == 1) "total" else "county", "_model_run_", gsub("-", "", Sys.Date()), ".csv")))
+#Export results
+write.csv(year_week_average,
+       here("data", "processed", "model_predictions", paste0(if(model_data$num_counties == 1) "total" else "county", "_model_run_", gsub("-", "", Sys.Date()), ".csv")),
+       row.names = FALSE)
