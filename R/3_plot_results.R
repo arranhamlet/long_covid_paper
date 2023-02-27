@@ -23,7 +23,7 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
 )  
 
 #Load functions
-invisible(sapply(list.files("R/functions/", full.names = T), function(x) source(x)))
+invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), function(x) source(x)))
 
 #Load in shapefile for Washington
 WA_adm2 <- readOGR(here("data", "shapefile", "WA_County_Bndys.shp"))
@@ -46,7 +46,7 @@ symptom_prevalence <- symptom_prevalence_raw %>%
                             time_period_end_date)))
 
 #Load in model estimates
-model_estimates <- import(max(list.files(here("data", "processed", "model_predictions"), pattern = "county", full.names = T)))
+model_estimates <- import(max(list.files(here("data", "processed", "model_estimates"), pattern = "county", full.names = T)))
 
 #Load in raw data
 model_data <- prepare_data_for_model()
@@ -66,7 +66,7 @@ subgroup_prevalence <- plot_prevalence_by_subgroup(subgroup_data = aggregate_run
 
 #Plot map
 map_prevalence <- plot_map_results(model_estimates = model_estimates,
-                 state_demography_data = state_demography_data,
+                 state_demography_data = demog_data,
                  shapefile = WA_adm2)
 
 #Prevalence by subgroup - table and summary text

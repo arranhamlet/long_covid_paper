@@ -19,7 +19,7 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
 )  
 
 #Load functions
-invisible(sapply(list.files("R/functions/", full.names = T), function(x) source(x)))
+invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), function(x) source(x)))
 
 #Import fit parameters
 load_in_fit_parameters <- import(max(list.files(here("data", "processed", "fit_parameters"), full.names = T)))
@@ -42,7 +42,7 @@ model_data <- prepare_data_for_model(
                        0.353,
                        4/3),
   #Specify the number of LHC samples
-  number = 2,
+  number = 10,
   #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties

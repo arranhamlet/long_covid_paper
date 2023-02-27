@@ -13,15 +13,12 @@ pretty_format_model_breakdown <- function(model_estimates,
   model_run_age <- subgroup_prevalence %>%
     filter(age_group %in% c("0-17", "18-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80+")) %>%
     group_by(age_group, timestep) %>%
-    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
-    left_join(pop_data, by = "age_group")
+    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T)))
   
   #Aggregate to sex only
   model_run_sex <- subgroup_prevalence %>%
     group_by(sex, timestep) %>%
-    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
-    left_join(sex_pop_agg, by = c("sex" = "category")) %>%
-    group_by(sex)
+    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T)))
   
   #Aggregate to race/ethnicity only
   model_run_race <- subgroup_prevalence %>%
@@ -29,8 +26,7 @@ pretty_format_model_breakdown <- function(model_estimates,
                        "Black alone, not Hispanic", "Hispanic or Latino (may be of any race)",    
                        "White alone, not Hispanic")) %>%
     group_by(race, timestep) %>%
-    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
-    left_join(race_pop_agg, by = c("race" = "category"))
+    summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T)))
   
   #Subset pulse data to disability
   disability_long_COVID <- pulse_data %>%

@@ -19,17 +19,18 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
 )  
 
 #Load functions
-invisible(sapply(list.files(here("R", "functions"), full.names = T), function(x) source(x)))
+invisible(sapply(list.files(here("R", "functions"), full.names = T, recursive = T), function(x) source(x)))
 
 #Set up data
 model_data <- prepare_data_for_model(
   #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties
-  county_or_total = "total")
+  county_or_total = "total") #Note that we fit using "total", the result is the same as specifying by county (no change to numbers or demographics) but it is a lot faster if we reduce the 39 county compartments to 1
 
 #Load in the model - ignore installing devtools
-model <- odin(here("odin", "long_covid_model_stochastic_county.R"))
+#using the direct file name as odin doesnt support the use of here 
+model <- odin("odin/long_covid_model_stochastic_county.R")
 
 #Set up benchmark data
 benchmark_data <- model_data$full_pulse_data %>%

@@ -32,7 +32,7 @@ plot_prevalence_by_subgroup <- function(subgroup_data){
     ungroup() %>%
     mutate(final_prev = median(mid_all_long_inc_perm/total))
   
-  age_prevalence <- ggplot(data = subset(model_run_age, timestep == max(timestep)), 
+  age_prevalence <- ggplot(data = subset(subgroup_data, aggregate_type == "age_group" & timestep == max(timestep)), 
                            aes(x = age_group,
                                y = mid_all_long_inc_perm/total/unique(final_median_age_prev$final_prev) * 100,
                                ymin = low_all_long_inc_perm/total/unique(final_median_age_prev$final_prev) * 100,
