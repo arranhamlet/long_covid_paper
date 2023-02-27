@@ -41,7 +41,7 @@ model_data <- prepare_data_for_model(
                        subset(load_in_fit_parameters, grepl("omicron", parameter))$fitted_value,
                        0.353,
                        4/3),
-  #Specify the number of LHC samples
+  #Specify the number of LHC samples - this is how many different runs you want to do
   number = 10,
   #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
