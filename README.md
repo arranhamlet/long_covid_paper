@@ -1,11 +1,13 @@
 # Stochastic mathematical model for the estimation of long COVID in Washington state
 
-Here we present our framework for the estimation of long COVID in Washington state through the use of a stochastic mathematical model coded in [odin](https://mrc-ide.github.io/odin/index.html) and executed through the programming language [R](https://www.r-project.org/). Though this example has been created using data for Washington state, and the data we have available, the code is flexible and can adapt to the information you have available if correctly specified.
+Here we present our framework for the estimation of long COVID in Washington state through the use of a stochastic mathematical model coded in [odin](https://mrc-ide.github.io/odin/index.html) and executed through the programming language [R](https://www.r-project.org/). By using a wide range of estimates from literature, and employing the [Latin Hypercube Sampling](https://en.wikipedia.org/wiki/Latin_hypercube_sampling) method for parameter sampling we are able to produce robust estimates of the burden of long COVID, broken down by age group, sex, race-ethnicity and county.
+
+Though this example has been created using data for Washington state, and the data we have available, the code is flexible and can adapt to the information you have available if correctly specified.
 
 There are three main sections to using the model in this walkthrough, all found within the R folder.
 1) Fitting the model to data
 2) Running the model
-3) Plotting results
+3) Plotting the results
 
 # Fitting the model
 
@@ -14,6 +16,23 @@ This is carried out using the file "R/1_fit_model_to_data.R". The user loads in 
 The results of this process are then saved and used in the next section.
 
 # Running the model
+
+The user specifies the parameters they would like to vary using [Latin Hypercube Sampling](https://en.wikipedia.org/wiki/Latin_hypercube_sampling) to explore variation in the parameter. This allows us to explore a wide range of different values for each parameter specified, and captures some of the uncertainty that exists in this rapidly changing field of study.
+
+After specifying the baseline parameters, the user runs the model using the function `run_odin_model()`. This will iterate through each of the LHC samples and produce estimates of the long COVID burden each time (and a plot showing a visual comparison).
+
+Once all the runs have been completed, the results will be aggrgated and 95% CI's of the estimates produced. These results are then exported to be used in plotting the results.
+
+# Plotting the results
+
+Here several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
+[](figs/case_hosp_long_data.jpg)
+1) (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
+[](figs/subgroup_prevalence.jpg)
+2) The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
+[](figs/map_prevalence.jpg)
+3) The relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
+
 
 # Model description
 
