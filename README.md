@@ -26,17 +26,23 @@ Once all the runs have been completed, the results will be aggrgated and 95% CI'
 # Plotting the results
 
 Here several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
-![incidence_prev](figs/case_hosp_long_data.jpg)
-1) (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
-![subgroup_prev](figs/subgroup_prevalence.jpg)
-2) The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
-![map_prev](figs/map_prevalence.jpg)
-3) The relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
 
+![incidence_prev](figs/case_hosp_long_data.jpg)
+
+1) (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
+
+![subgroup_prev](figs/subgroup_prevalence.jpg)
+
+2) The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
+
+![map_prev](figs/map_prevalence.jpg)
+
+3) The relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
 
 # Model description
 
 ![Model diagram showing the progression between states](img/diagram.png)
+
 Figure 1. Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments LNH¬ and LH respectively. These progress to either recovered, R, or unrecovered, U with the probability αNH and αH or βNH or βH respectively.
 
 Here we use a stochastic compartmental model to estimate the burden of long COVID. Each compartment contains 8 age categories, 5 race/ethnicity groups, 3 vaccination categories and 2 sexes, as well as an unknown category for missing information for each group. This results in 162 sub compartments per compartment. The number of sub-compartments within each compartment is due to the available data on cases and hospitalizations, and probabilities of long COVID. 
