@@ -27,17 +27,17 @@ Once all the runs have been completed, the results will be aggrgated and 95% CI'
 
 Here several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
 
-![incidence_prev](figs/case_hosp_long_data.jpg)
+![incidence_prev](figs/case_hosp_long_data.jpg | width = 50)
 
-1) (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
+Input data and prevalence estimates of long COVID. (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
 
 ![subgroup_prev](figs/subgroup_prevalence.jpg)
 
-2) The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
+The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
 
 ![map_prev](figs/map_prevalence.jpg)
 
-3) The relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
+he relative prevalence of long COVID by county in Washington Statea t the final timepoint in the data.
 
 # Model description
 
