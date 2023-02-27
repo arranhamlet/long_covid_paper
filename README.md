@@ -31,6 +31,10 @@ The final script, [3_plot_results.R](R/3_plot_results.R), uses several functions
 
 Input data and prevalence estimates of long COVID. (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
 
+For the subgroup analysis we can only present **relative** estimates of prevalence. In order to account for temporally varying issues with surveillance we use infection estimates from a previously designed and implemented [mathematical model of COVID transmission](https://iazpvnewgrp01.blob.core.windows.net/source/2021-02/reports/pdf/Sustained_reductions_in_transmission_have_led_to_declining_COVID_19_prevalence_in_King_County_WA.pdf) used by the Washington State Department of Health. These estimates suggest that ~80% of symptomatic cases of COVID are not recorded, with this percent varying substantially over time.
+
+These "missing" symptomatic cases are included in our model, but do not contain any subcompartment information (age, sex, race-ethnicity, vaccination status or county). This means that while our overall estimates of the burden of long COVID closely match those surveyed in the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm), our case breakdowns do not as ~80% of our information is without this data. Due to this we can only report the **relative** prevalence. This allows us to highlight disparities between groups, but not to comment on the actual prevalence encountered.
+
 <img src="figs/subgroup_prevalence.jpg" width="550" height="350">
 
 The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
