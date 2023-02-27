@@ -37,17 +37,17 @@ These "missing" symptomatic cases are included in our model, but do not contain 
 
 <img src="figs/subgroup_prevalence.jpg" width="550" height="350">
 
-The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.
+<em>The relative prevalence of long COVID by different (A) sexes, (B) age groups and (C) race/ethnicities at the final timepoint in the data.</em>
 
 <img src="figs/map_prevalence.jpg" width="550" height="400">
 
-The relative prevalence of long COVID by county in Washington State at the final timepoint in the data.
+<em>The relative prevalence of long COVID by county in Washington State at the final timepoint in the data.</em>
 
 # Model description
 
 ![Model diagram showing the progression between states](img/diagram.png)
 
-Figure 1. Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments L<sub>NH</sub> and L<sub>H</sub> respectively. These progress to either recovered, R, or unrecovered, U with the probability α<sub>NH</sub> and α<sub>H</sub> or β<sub>NH</sub> or β<sub>H</sub> respectively.
+<em>Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments L<sub>NH</sub> and L<sub>H</sub> respectively. These progress to either recovered, R, or unrecovered, U with the probability α<sub>NH</sub> and α<sub>H</sub> or β<sub>NH</sub> or β<sub>H</sub> respectively.</em>
 
 Here we use a stochastic compartmental model to estimate the burden of long COVID. Each compartment contains 8 age categories, 5 race/ethnicity groups, 3 vaccination categories and 2 sexes, as well as an unknown category for missing information for each group. This results in 162 sub compartments per compartment. The number of sub-compartments within each compartment is due to the available data on cases and hospitalizations, and probabilities of long COVID. 
 
