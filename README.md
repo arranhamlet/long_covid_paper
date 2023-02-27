@@ -27,7 +27,7 @@ Once all the runs have been completed, the results will be aggrgated and 95% CI'
 
 Here several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
 
-![incidence_prev](figs/case_hosp_long_data.jpg | width=100)
+![incidence_prev](figs/case_hosp_long_data.jpg =250x250)
 
 Input data and prevalence estimates of long COVID. (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.
 
