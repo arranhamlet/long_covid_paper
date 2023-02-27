@@ -25,7 +25,7 @@ Once all the runs have been completed, the results will be aggrgated and 95% CI'
 
 # Plotting the results
 
-Here several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
+The final script, [3_plot_results.R](R/3_plot_results.R), uses several functions are used to process the model results and relevant demographic data to produce estimates of the prevalence of long COVID.
 
 <img src="figs/case_hosp_long_data.jpg" width="600" height="300">
 
