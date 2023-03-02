@@ -1,10 +1,8 @@
-options(scipen = 999)
-
 #Load in packages
 if(!require("pacman")) install.package("pacman")  #If pacman package doesnt exist, install it
+
 #p_load looks to see if packages exists, and if they do loads them and if they dont, installs and loads them
-pacman::p_load(odin,       #This is the package that contains the language odin which solves the ODEs
-               ggplot2,    #used for plotting
+pacman::p_load(ggplot2,    #used for plotting
                scales,     #used for plotting nice scales
                rio,        #used to import data
                here,       #used to simplify file paths
@@ -13,13 +11,13 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
                janitor,    #used to clean data
                devtools,   #used to install packages 
                rgdal,      #used for shapefules
-               ggpubr,   
-               maptools,
-               viridis,
-               grid,
-               raster,
+               ggpubr,     #used for arranging plots
+               maptools,   #used for plotting maps
+               viridis,    #colorscheme for plots
+               grid,       #used for arranging plots
+               raster,     #used for plotting maps
                tsibble,    #used for yearweek
-               tidyverse  #a variety of packages for manipulating data 
+               tidyverse   #a variety of packages for manipulating data 
 )  
 
 #Load functions

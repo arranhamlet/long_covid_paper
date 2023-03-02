@@ -1,7 +1,6 @@
 
 fit_odin_model <- function(odin_model, 
                            prepare_data_for_model_object, 
-                           benchmark_data,
                            parameters_to_fit,
                            starting_values,
                            lower_limits,
@@ -11,6 +10,12 @@ fit_odin_model <- function(odin_model,
   #Set up inputs
   fit_these <- c(starting_values)
   names(fit_these) <- parameters_to_fit
+  
+  random_string <- stri_rand_strings(1, length = 6)
+  
+  #Create folder
+  fit_folder <- here("data", "processed", "fit_parameters", "individual_fits", random_string)
+  if(!dir.exists(fit_folder)) dir.create(fit_folder)
   
   #Fit model
   model_go <- optim(
@@ -22,20 +27,8 @@ fit_odin_model <- function(odin_model,
     upper = upper_limits,
     odin_model = odin_model,
     prepare_data_for_model_object = prepare_data_for_model_object,
-    benchmark_data = benchmark_data,
-    benchmark_weights = weights
+    benchmark_weights = weights,
+    random_string = random_string
   )
-  
-  #Fitting results
-  fitting_results <- data.frame(parameter = names(fit_these),
-                                starting_value = fit_these,
-                                lower_limit = lower_limits,
-                                upper_limit = upper_limits,
-                                fitted_value = as.numeric(model_go$par),
-                                weight = paste(weights, collapse = ";"),
-                                measure_of_fit = model_go$value,
-  row.names = NULL)
-  
-  fitting_results
   
 }

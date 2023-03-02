@@ -1,9 +1,8 @@
-options(scipen = 999)
-
 #Load in packages
 if(!require("pacman")) install.package("pacman")  #If pacman package doesnt exist, install it
+
 #p_load looks to see if packages exists, and if they do loads them and if they dont, installs and loads them
-pacman::p_load(odin,       #This is the package that contains the language odin which solves the ODEs
+pacman::p_load(odin,       #This is the package that contains the language odin which runs our model
                ggplot2,    #used for plotting
                scales,     #used for plotting nice scales
                rio,        #used to import data

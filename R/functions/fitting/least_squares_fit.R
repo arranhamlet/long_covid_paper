@@ -1,9 +1,11 @@
 
-least_squares_fit <- function(par, odin_model, prepare_data_for_model_object, benchmark_data,
-                           benchmark_weights = 1, ...){
+least_squares_fit <- function(par, odin_model, prepare_data_for_model_object,
+                              benchmark_weights = 1, plot = T, random_string, ...){
   
   #Parameters that can be possibly fit - including default values
-  parameters_that_can_fit <- data.frame(
+  prepare_data_for_model_object$number <- 1
+  
+  default_values <- data.frame(
     vaccination_impact_full = 0.647,
     vaccination_impact_partial = 0.647,
     non_hosp_additional_mortality_long = 1,
@@ -17,55 +19,28 @@ least_squares_fit <- function(par, odin_model, prepare_data_for_model_object, be
     omicron_long_covid_multiplier = 4.5/10.8
   )
   
+  prepare_data_for_model_object$latin_hypercube <- default_values
+  
   #Replace values that we want to fit
   for(i in names(par)){
-    parameters_that_can_fit[i] <- par[i]
+    prepare_data_for_model_object$latin_hypercube[i] <- par[i]
   }
   
   #Set up vaccination
-  prepare_data_for_model_object$age_sex_race_vaccination_array <- sweep(prepare_data_for_model_object$age_sex_race_vaccination_array, 4, c(parameters_that_can_fit$vaccination_impact_full, median(c(parameters_that_can_fit$vaccination_impact_full, 1)), parameters_that_can_fit$vaccination_impact_partial, 1), "*")
+  prepare_data_for_model_object$age_sex_race_vaccination_array <- sweep(prepare_data_for_model_object$age_sex_race_vaccination_array, 
+                                                                        4, 
+                                                                        c(prepare_data_for_model_object$latin_hypercube$vaccination_impact_full, 
+                                                                          median(c(prepare_data_for_model_object$latin_hypercube$vaccination_impact_full, 1)), 
+                                                                          prepare_data_for_model_object$latin_hypercube$vaccination_impact_partial, 1), "*")
   
-  #Run model with our inputs
-  model_generator <- odin_model$new(time_length = prepare_data_for_model_object$num_timepoints,
-                               bd = prepare_data_for_model_object$bd,
-                               age_group_number = prepare_data_for_model_object$num_age_groups,
-                               sex_number = prepare_data_for_model_object$num_sex,
-                               race_ethnicity_number = prepare_data_for_model_object$num_race_groups,
-                               vaccination_status = prepare_data_for_model_object$num_vaccine_groups,
-                               num_counties = prepare_data_for_model_object$num_counties,
-                               
-                               infection = prepare_data_for_model_object$infections,
-                               cases = prepare_data_for_model_object$cases,
-                               hospitalization = prepare_data_for_model_object$hospitalizations,
-                               
-                               non_hosp_additional_mortality_long = parameters_that_can_fit$non_hosp_additional_mortality_long,
-                               hosp_additional_mortality_long = parameters_that_can_fit$hosp_additional_mortality_long,
-                               
-                               infection_long_non_hosp = prepare_data_for_model_object$age_sex_race_vaccination_array * parameters_that_can_fit$non_hosp_additional_mortality_long,
-                               cases_long_non_hosp = prepare_data_for_model_object$age_sex_race_vaccination_array,
-                               hosp_long_hosp = prepare_data_for_model_object$age_sex_race_vaccination_array * parameters_that_can_fit$hosp_additional_mortality_long,
-                               
-                               time_omicron_switch = prepare_data_for_model_object$time_omicron_switch,
-                               case_delay = 3,
-                               
-                               #Fit these
-                               permanent_non_hosp_prop = parameters_that_can_fit$permanent_non_hosp_prop,
-                               permanent_hosp_prop = parameters_that_can_fit$permanent_hosp_prop,
-                               recovery_rate_non_hosp = parameters_that_can_fit$recovery_rate_non_hosp,
-                               recovery_rate_hosp = parameters_that_can_fit$recovery_rate_hosp,
-                               omicron_long_covid_multiplier = parameters_that_can_fit$omicron_long_covid_multiplier
-                               )
+  #Run the odin model
+  over_18_pop <- 7656200 * (1 - 0.217)
   
-  model_ran <- as.data.frame(model_generator$run(1:prepare_data_for_model_object$num_timepoints))
-  
-  #Clean model output
-  over_18_pop <- ((1 - 0.217) * 7656200)
-  
-  cleaned_model_results <- clean_model_results(raw_case_data = prepare_data_for_model_object$cases,
-                                               model_results = model_ran,
-                                               time_unit = paste0("year", "month"),
-                                               county_or_total = if(prepare_data_for_model_object$num_counties != 1) "county" else "total") %>%
-    subset(age_group == "18+") %>%
+  cleaned_model_results <- run_odin_model(
+    model_data = prepare_data_for_model_object,
+    adult_population = over_18_pop,
+    return = "18+",
+    plot = F) %>%
     mutate(prev = 100 * all_long_inc_perm/over_18_pop)
   
   #Set up dataframe
@@ -87,11 +62,28 @@ least_squares_fit <- function(par, odin_model, prepare_data_for_model_object, be
           labs(subtitle = paste0("Sum of Least Squares: ", round(sum_least_squares, 2))) +
           theme(legend.position = "none") +
           annotation_custom(tableGrob(parameter_table, rows = NULL),
-                   xmin = ymd("2020/06/01"),
-                   xmax = ymd("2021/03/01"),
-                   ymin = 5, 
-                   ymax = 6))
+                            xmin = ymd("2020/06/01"),
+                            xmax = ymd("2021/03/01"),
+                            ymin = 5, 
+                            ymax = 6))
   
+  #Save data
+  save_fit <- gather(prepare_data_for_model_object$latin_hypercube) %>% 
+    mutate(date_time = Sys.time(),
+           sum_least_squares = sum_least_squares,
+           weights = paste(benchmark_weights, collapse = ";"),
+           final_longcovid_number = subset(cleaned_model_results, timestep == max(timestep))$all_long_inc_perm) %>%
+    left_join(gather(default_values, value = "default_values"), by = "key") %>%
+    select(date_time, weights, key, default_values, value, sum_least_squares, final_longcovid_number)
+  
+  write.csv(save_fit,
+            here("data", "processed", "fit_parameters", "individual_fits", random_string,
+                 paste0("individual_fit_",
+                        sum_least_squares,
+                        ".csv")),
+            row.names = FALSE)
+  
+  #Report least squares
   sum_least_squares
   
 }
