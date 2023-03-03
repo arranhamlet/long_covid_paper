@@ -59,5 +59,5 @@ param_fit_df <- data.frame(
 fitting_results <- fit_odin_model(
   odin_model = model,                       #The odin model
   parameter_fit_dataframe = param_fit_df,   #The dataframe of what to fit and the range of values to try
-  weights = c(1, 1, 1, 1, 1, 1, 0, 1, 1)
+  weights = 1                               #You can either specify 1 (all the same) or specify different weights for each household pulse survey for the fitting process
 )
