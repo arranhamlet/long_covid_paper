@@ -57,6 +57,7 @@ param_fit_df <- data.frame(
 #you can load in the best parameter set by using the function load_best_fit(id = ) where the id is the name of the folder you want to load
 #these are then fed into the function prepare_data_for_model at the next step
 fitting_results <- fit_odin_model(
-  odin_model = model,                      #The odin model
-  parameter_fit_dataframe = param_fit_df   #The dataframe of what to fit and the range of values to try
+  odin_model = model,                       #The odin model
+  parameter_fit_dataframe = param_fit_df,   #The dataframe of what to fit and the range of values to try
+  weights = c(1, 1, 1, 1, 1, 1, 0, 1, 1)
 )

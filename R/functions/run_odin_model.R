@@ -1,5 +1,5 @@
 
-run_odin_model <- function(model_data, adult_population, return = "all", plot = T){
+run_odin_model <- function(model_data, adult_population, return = "all", plot = T, print_progress = T){
   
   #Loop through all runs of the latin hypercube
   first_time <- Sys.time()
@@ -68,7 +68,7 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
     }
     
     time_inside_2 <- Sys.time()
-    message(paste0("Run ", a, " of ", model_data$number, " time elapsed ", round(difftime(time_inside_2, first_time, units = "mins"), 2)))
+    if(print_progress == T) message(paste0("Run ", a, " of ", model_data$number, " time elapsed ", round(difftime(time_inside_2, first_time, units = "mins"), 2)))
     
     #Output
     cleaned_model_results

@@ -43,7 +43,7 @@ symptom_prevalence <- symptom_prevalence_raw %>%
   mutate(mean_date = mean(c(time_period_start_date,
                             time_period_end_date)))
 
-#Load in model estimates
+#Load in model estimates - this will load the file with the latest date
 model_estimates <- import(max(list.files(here("data", "processed", "model_estimates"), pattern = "county", full.names = T)))
 
 #Load in raw data

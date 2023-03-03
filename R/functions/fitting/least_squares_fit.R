@@ -21,10 +21,20 @@ least_squares_fit <- function(par,
     model_data = prepare_data_for_model_object,
     adult_population = over_18_pop,
     return = "18+",
-    plot = F) %>%
+    plot = F,
+    print_progress = F) %>%
     mutate(prev = 100 * all_long_inc_perm/over_18_pop)
   
   #Set up dataframe
+  benchmark_data <- subset(prepare_data_for_model_object$full_pulse_data,
+                           state == "Washington" &
+                           indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
+    mutate(across(
+      .cols = ends_with("_date"),
+           .fns = mdy)) %>%
+    mutate(yearmonth = yearmonth(median(c(time_period_start_date,
+                                          time_period_end_date))))
+  
   data_prediction <- data.frame(data = benchmark_data$value,
                                 prediction = subset(cleaned_model_results,
                                                     as.character(timestep) %in% as.character(benchmark_data$yearmonth))$prev) %>%
@@ -36,7 +46,7 @@ least_squares_fit <- function(par,
                                 Value = round(par, 5))
   
   #Plot
-  print(plot_prevalence(cleaned_model_results,
+  print(plot_prevalence(model_output = cleaned_model_results,
                         benchmark = T,
                         benchmark_data = benchmark_data,
                         population = over_18_pop) +

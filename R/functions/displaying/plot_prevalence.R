@@ -1,13 +1,10 @@
-plot_prevalence <- function(model_output, population = 5994805, benchmark = F, benchmark_data = F){
+plot_prevalence <- function(model_output, population, benchmark = F, benchmark_data = F){
   
   overall_data <- subset(model_output,
                          age_group == "18+" &
                            sex == "all" &
                            race == "all" &
                            vaccination == "all")
-  
-  #Set up time
-  time_type <- class(overall_data$timestep)[1]
   
   #Benchmark section
   plot_output <- ggplot() +
@@ -32,8 +29,12 @@ plot_prevalence <- function(model_output, population = 5994805, benchmark = F, b
                              state == "Washington" & 
                                indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
       group_by(time_period) %>%
+      mutate(across(
+        .cols = ends_with("_date"),
+        .fns = ymd
+      )) %>%
       mutate(pulse = paste0("Survey ", time_period),
-             middle_date = mean(c(mdy(time_period_end_date), mdy(time_period_start_date))))
+             middle_date = mean(c(time_period_end_date, time_period_start_date)))
     
     plot_output <- plot_output +
       geom_errorbar(data = this_benchmark,
