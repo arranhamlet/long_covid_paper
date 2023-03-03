@@ -1,6 +1,20 @@
+# LHC_param_names = c("permanent_non_hosp_prop",
+#                     "permanent_hosp_prop",
+#                     "recovery_rate_non_hosp",
+#                     "recovery_rate_hosp",
+#                     "omicron_long_covid_multiplier")
+# LHC_param_values = c(subset(load_in_fit_parameters, grepl("permanent_non_hosp_prop", parameter))$fitted_value,
+#                      subset(load_in_fit_parameters, grepl("permanent_hosp_prop", parameter))$fitted_value,
+#                      1/subset(load_in_fit_parameters, grepl("recovery_rate_non_hosp", parameter))$fitted_value,
+#                      1/subset(load_in_fit_parameters, grepl("recovery_rate_hosp", parameter))$fitted_value,
+#                      subset(load_in_fit_parameters, grepl("omicron", parameter))$fitted_value)
+# number = 1
+# county_or_total = "total"
+# sd_variation = 0.2
 
-prepare_data_for_model <- function(LHC_param_names = NA, #The names of the parameters you want to fit with the LHC
-                                   LHC_param_values = NA, #The values of the parameters you want to fit with the LHC
+prepare_data_for_model <- function(LHC_param_names = NA, 
+                                   LHC_param_values = NA,
+                                   fit_object = NA,
                                    number = 10, #the number of runs you want to do
                                    county_or_total = "total", #Specify if you want the county level data to be loaded in
                                    sd_variation = 0.2, #The sd variation in the LHC
@@ -120,7 +134,7 @@ prepare_data_for_model <- function(LHC_param_names = NA, #The names of the param
   time_adjust <- if(time == "month") 30 else if(time == "week") 7 else if(time == "day") 1
   
   #Set up LHC values for sampling
-  if(all(!is.na(LHC_param_values))){
+  if(!all(is.na(LHC_param_values))){
     sd_variation_updated <- if(length(sd_variation) == length(LHC_param_values)) sd_variation[i] else sd_variation
     
     potential_LHC_values <- sapply(1:length(LHC_param_values), function(x){
@@ -129,7 +143,7 @@ prepare_data_for_model <- function(LHC_param_names = NA, #The names of the param
             sd = LHC_param_values[x] * sd_variation_updated)
     }, simplify = FALSE)
     
-    if(all(!is.na(LHC_param_names))) names(potential_LHC_values) <- LHC_param_names
+    if(!all(is.na(LHC_param_names))) names(potential_LHC_values) <- LHC_param_names
     
     latin_hypercube <- as.data.frame(randomLHS(length(potential_LHC_values[[1]]), length(potential_LHC_values)))
     
@@ -138,9 +152,20 @@ prepare_data_for_model <- function(LHC_param_names = NA, #The names of the param
     }
     
     colnames(latin_hypercube) <- names(potential_LHC_values)
-
   } else {
     latin_hypercube <- NULL
+  }
+
+  #Add in default values
+  default_values <- import(here("data", "raw", "parameter_values", "default_values.csv"))
+  
+  if(is.null(latin_hypercube)){
+    latin_hypercube <- default_values
+  } else {
+    latin_hypercube <- cbind(latin_hypercube,
+                             default_values %>% 
+                               select(which(!colnames(default_values) %in% colnames(latin_hypercube))),
+                             row.names = NULL)
   }
   
   list(  num_timepoints = num_timepoints,

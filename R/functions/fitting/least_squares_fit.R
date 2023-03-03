@@ -1,37 +1,18 @@
 
-least_squares_fit <- function(par, odin_model, prepare_data_for_model_object,
-                              benchmark_weights = 1, plot = T, random_string, ...){
+least_squares_fit <- function(par, 
+                              odin_model,
+                              random_string,
+                              benchmark_weights = 1, 
+                              plot = T, 
+                              ...){
   
-  #Parameters that can be possibly fit - including default values
-  prepare_data_for_model_object$number <- 1
-  
-  default_values <- data.frame(
-    vaccination_impact_full = 0.647,
-    vaccination_impact_partial = 0.647,
-    non_hosp_additional_mortality_long = 1,
-    hosp_additional_mortality_long = 1,
-    infection_longprob_multiplier = 2/3,
-    hosp_longprob_multiplier = 4/3,
-    permanent_non_hosp_prop = 0.6,
-    permanent_hosp_prop = 0.16,
-    recovery_rate_non_hosp = 0.25,
-    recovery_rate_hosp = 1/9,
-    omicron_long_covid_multiplier = 4.5/10.8
+  #Prepare data for model setting number to 1 and sd_variation to 0 as we are not using LHC sampling during fitting
+  prepare_data_for_model_object <- prepare_data_for_model(
+    LHC_param_names = names(par),
+    LHC_param_values = as.numeric(par),
+    number = 1,
+    sd_variation = 0
   )
-  
-  prepare_data_for_model_object$latin_hypercube <- default_values
-  
-  #Replace values that we want to fit
-  for(i in names(par)){
-    prepare_data_for_model_object$latin_hypercube[i] <- par[i]
-  }
-  
-  #Set up vaccination
-  prepare_data_for_model_object$age_sex_race_vaccination_array <- sweep(prepare_data_for_model_object$age_sex_race_vaccination_array, 
-                                                                        4, 
-                                                                        c(prepare_data_for_model_object$latin_hypercube$vaccination_impact_full, 
-                                                                          median(c(prepare_data_for_model_object$latin_hypercube$vaccination_impact_full, 1)), 
-                                                                          prepare_data_for_model_object$latin_hypercube$vaccination_impact_partial, 1), "*")
   
   #Run the odin model
   over_18_pop <- 7656200 * (1 - 0.217)
@@ -80,10 +61,12 @@ least_squares_fit <- function(par, odin_model, prepare_data_for_model_object,
             here("data", "processed", "fit_parameters", "individual_fits", random_string,
                  paste0("individual_fit_",
                         sum_least_squares,
+                        "_",
+                        stri_rand_strings(1, length = 6),
                         ".csv")),
             row.names = FALSE)
   
-  #Report least squares
-  sum_least_squares
+  #Report least squares rounded - improving by more than 3 decimal places has no real effect on the output
+  round(sum_least_squares, 3)
   
 }

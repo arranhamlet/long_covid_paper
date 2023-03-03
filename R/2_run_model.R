@@ -1,8 +1,9 @@
+options(scipen = 999)
+
 #Load in packages
 if(!require("pacman")) install.package("pacman")  #If pacman package doesnt exist, install it
-
 #p_load looks to see if packages exists, and if they do loads them and if they dont, installs and loads them
-pacman::p_load(odin,       #This is the package that contains the language odin which runs our model
+pacman::p_load(odin,       #This is the package that contains the language odin which solves the ODEs
                ggplot2,    #used for plotting
                scales,     #used for plotting nice scales
                rio,        #used to import data
@@ -15,43 +16,55 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
                tsibble,    #used for yearweek
                lhs,         #used to carry out latin hypercube sampling
                tidyverse  #a variety of packages for manipulating data 
+               
 )  
 
 #Load functions
-invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), function(x) source(x)))
+invisible(sapply(list.files("R/functions/", full.names = T), function(x) source(x)))
 
-#Import fit parameters
-load_in_fit_parameters <- import(max(list.files(here("data", "processed", "fit_parameters"), full.names = T)))
+#County data
+demog_data <- import(here("data", "processed", "demographic", "demographic_data_processed.csv"))
+
+#Load in best fitting parameters - This loads in the parameter set with the best (lowest) Sum of Least Squares from the fitting process
+#specifiy id =  as the folder of fits you want to use
+load_in_fit_parameters <- load_best_fit(id = "8KpwNo")
+
+#We are subsetting to only the values we fit, becasue these are what we want to explore in the LHC process
+LHC_these <- load_in_fit_parameters %>%
+  subset(which_fit == T)
 
 #Set up data
 model_data <- prepare_data_for_model(
-  #Parameters for LHC and the values
-  LHC_param_names = c("permanent_non_hosp_prop",
-                      "permanent_hosp_prop",
-                      "recovery_rate_non_hosp",
-                      "recovery_rate_hosp",
-                      "omicron_long_covid_multiplier",
-                      "vaccination_impact",
-                      "hospitalization_long_covid_multiplier"),
-  LHC_param_values = c(subset(load_in_fit_parameters, grepl("permanent_non_hosp_prop", parameter))$fitted_value,
-                       subset(load_in_fit_parameters, grepl("permanent_hosp_prop", parameter))$fitted_value,
-                       1/subset(load_in_fit_parameters, grepl("recovery_rate_non_hosp", parameter))$fitted_value,
-                       1/subset(load_in_fit_parameters, grepl("recovery_rate_hosp", parameter))$fitted_value,
-                       subset(load_in_fit_parameters, grepl("omicron", parameter))$fitted_value,
-                       0.353,
+  #Parameters for LHC and the values - we are putting the parameters fit and also additional parameters into the LHC
+  LHC_param_names = c(LHC_these$parameter,
+                      "vaccination_impact_partial",
+                      "vaccination_impact_full", 
+                      "hosp_longprob_multiplier"),
+  LHC_param_values = c(LHC_these$fitted_value,
+                       1 - 0.353,
+                       1 - 0.353,
                        4/3),
-  #Specify the number of LHC samples - this is how many different runs you want to do
+  #Specify the number of LHC samples
+  sd_variation = .25,
   number = 10,
-  #How to assign unreported cases either the same shape or unknown (into NA compartment)
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties
   county_or_total = "county")
+
+#Benchmark
+benchmark_data <- model_data$full_pulse_data %>%
+  subset(state == "Washington" &
+           indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
+  group_by(phase, time_period) %>%
+  mutate(time_period_end_date = mdy(time_period_end_date),
+         time_period_start_date = mdy(time_period_start_date),
+         yearmonth = yearmonth(median(c(time_period_end_date, time_period_start_date ))))
 
 #Run model
 model <- odin("odin/long_covid_model_stochastic_county.R")
 
 model_results <- run_odin_model(model_data = model_data,
-                                adult_population = 5994805)
+                           adult_population = ((1 - 0.217) * 7656200))
 
 #Average results across runs - this may take a while (>20mins)
 year_week_average <- model_results %>%

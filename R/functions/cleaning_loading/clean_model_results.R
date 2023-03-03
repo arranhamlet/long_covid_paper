@@ -4,7 +4,8 @@
 # vaccination = "all"
 # timestep = "all"
 # county = "all"
-# column_subset = "long_non_hosp;permanent_non_hosp;long_hosp;permanent_hosp;cases_to_long_COVID_incidence;hosp_to_long_COVID_incidence"
+# column_subset = "long_non_hosp;long_hosp;permanent;into_long_covid"
+# time_unit = "yearweek"
 
 clean_model_results <- function(raw_case_data,
                                 model_results,
@@ -16,7 +17,8 @@ clean_model_results <- function(raw_case_data,
                                 vaccination = "all",
                                 timestep = "all",
                                 county = "all",
-                                column_subset = "long_non_hosp;long_hosp;permanent;long_hosp;into_long_covid"){
+                                column_subset = "long_non_hosp;long_hosp;permanent;into_long_covid",
+                                return = "all"){
   
   options(dplyr.summarise.inform = FALSE)
   
@@ -62,35 +64,56 @@ clean_model_results <- function(raw_case_data,
                value = these_columns[, x])
   }, simplify = FALSE)))
   
-  overall_df <- easy_df %>%
-    group_by(data_type, timestep) %>%
-    summarise(value = sum(value, na.rm = TRUE)) %>%
-    mutate(age_group = "all",
-           sex = "all",
-           race = "all",
-           vaccination = "all",
-           county = "all") %>%
-    dplyr::select(age_group, sex, race, vaccination, county, data_type, timestep, value)
-  
-  adult_df <- easy_df %>%
-    subset(age_group != "0-17") %>%
-    group_by(data_type, timestep) %>%
-    summarise(value = sum(value, na.rm = TRUE)) %>%
-    mutate(age_group = "18+",
-           sex = "all",
-           race = "all",
-           vaccination = "all",
-           county = "all") %>%
-    dplyr::select(age_group, sex, race, vaccination, county, data_type, timestep, value)
-  
-  full_df <- rbind(overall_df, adult_df, easy_df) %>%
-    spread(key = data_type,
-           value = value) %>%
-    mutate(all_permanent = rowSums(across(contains("permanent")), na.rm = T),
-           all_long = rowSums(across(contains("long_")), na.rm = T),
-           all_long_inc_perm = all_permanent + all_long) %>%
-    as.data.frame()
-  
-  full_df
+  if(return == "all"){
+    overall_df <- easy_df %>%
+      group_by(data_type, timestep) %>%
+      summarise(value = sum(value, na.rm = TRUE)) %>%
+      mutate(age_group = "all",
+             sex = "all",
+             race = "all",
+             vaccination = "all",
+             county = "all") %>%
+      dplyr::select(age_group, sex, race, vaccination, county, data_type, timestep, value)
+    
+    adult_df <- easy_df %>%
+      subset(age_group != "0-17") %>%
+      group_by(data_type, timestep) %>%
+      summarise(value = sum(value, na.rm = TRUE)) %>%
+      mutate(age_group = "18+",
+             sex = "all",
+             race = "all",
+             vaccination = "all",
+             county = "all") %>%
+      dplyr::select(age_group, sex, race, vaccination, county, data_type, timestep, value)
+    
+    full_df <- rbind(overall_df, adult_df, easy_df) %>%
+      spread(key = data_type,
+             value = value) %>%
+      mutate(all_permanent = rowSums(across(contains("permanent")), na.rm = T),
+             all_long = rowSums(across(contains("long_")), na.rm = T),
+             all_long_inc_perm = all_permanent + all_long) %>%
+      as.data.frame()
+    
+    full_df
+    
+  } else {
+    
+    easy_df %>%
+      subset(age_group != "0-17") %>%
+      group_by(data_type, timestep) %>%
+      summarise(value = sum(value, na.rm = TRUE)) %>%
+      mutate(age_group = "18+",
+             sex = "all",
+             race = "all",
+             vaccination = "all",
+             county = "all") %>%
+      dplyr::select(age_group, sex, race, vaccination, county, data_type, timestep, value) %>%
+      spread(key = data_type,
+             value = value) %>%
+      mutate(all_permanent = rowSums(across(contains("permanent")), na.rm = T),
+             all_long = rowSums(across(contains("long_")), na.rm = T),
+             all_long_inc_perm = all_permanent + all_long)
+      
+  }
   
 }

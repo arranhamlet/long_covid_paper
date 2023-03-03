@@ -8,10 +8,12 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
     set.seed(a)
     
     #Set up vaccination
-    model_data$age_sex_race_vaccination_array <- sweep(model_data$age_sex_race_vaccination_array, 4, 
+    model_data$age_sex_race_vaccination_array <- sweep(model_data$age_sex_race_vaccination_array, 
+                                                       4, 
                                                        c(model_data$latin_hypercube$vaccination_impact_full[a], 
                                                          median(c(model_data$latin_hypercube$vaccination_impact_full[a], 1)), 
                                                          model_data$latin_hypercube$vaccination_impact_partial[a], 1), "*")
+    
     
     #Run model
     model_generator <- model$new(
@@ -45,7 +47,7 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
       #The change in the probability of developing long COVID with omicron dominance
       omicron_long_covid_multiplier = model_data$latin_hypercube$omicron_long_covid_multiplier[a],
       #Delay of infections/cases/hospitalizations to long COVID - 3 months as the household pulse survey
-      case_delay = 3)
+      case_delay = 0)
     
     #Run the model
     model_ran <- as.data.frame(model_generator$run(1:model_data$num_timepoints))

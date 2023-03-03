@@ -1,6 +1,5 @@
 
 fit_odin_model <- function(odin_model, 
-                           prepare_data_for_model_object, 
                            parameters_to_fit,
                            starting_values,
                            lower_limits,
@@ -11,22 +10,26 @@ fit_odin_model <- function(odin_model,
   fit_these <- c(starting_values)
   names(fit_these) <- parameters_to_fit
   
-  random_string <- stri_rand_strings(1, length = 6)
+  #Setting a random seed and then setting the seed as 1 to generate a random string and then start fitting from the same place
+  set.seed(runif(1, min = 1, max = 10000000))
+  random_string <- paste(c(sample(c(LETTERS, letters), 4, replace = T), 
+                           sample(0:9, 4, replace = T))[sample(1:8)], 
+                         collapse = "")
+  set.seed(1)
   
   #Create folder
   fit_folder <- here("data", "processed", "fit_parameters", "individual_fits", random_string)
   if(!dir.exists(fit_folder)) dir.create(fit_folder)
   
   #Fit model
-  model_go <- optim(
+  optimr(
     par = fit_these,
     fn = least_squares_fit,
     method  = "L-BFGS-B",
-    control = list(factr = 1e12),
+    # control = list(),
     lower = lower_limits,
     upper = upper_limits,
     odin_model = odin_model,
-    prepare_data_for_model_object = prepare_data_for_model_object,
     benchmark_weights = weights,
     random_string = random_string
   )
