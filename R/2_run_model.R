@@ -1,5 +1,3 @@
-options(scipen = 999)
-
 #Load in packages
 if(!require("pacman")) install.package("pacman")  #If pacman package doesnt exist, install it
 #p_load looks to see if packages exists, and if they do loads them and if they dont, installs and loads them
@@ -14,20 +12,17 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
                janitor,    #used to clean data
                devtools,   #used to install packages 
                tsibble,    #used for yearweek
-               lhs,         #used to carry out latin hypercube sampling
-               tidyverse  #a variety of packages for manipulating data 
+               lhs,        #used to carry out latin hypercube sampling
+               tidyverse   #a variety of packages for manipulating data 
                
 )  
 
 #Load functions
-invisible(sapply(list.files("R/functions/", full.names = T), function(x) source(x)))
-
-#County data
-demog_data <- import(here("data", "processed", "demographic", "demographic_data_processed.csv"))
+invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), function(x) source(x)))
 
 #Load in best fitting parameters - This loads in the parameter set with the best (lowest) Sum of Least Squares from the fitting process
 #specifiy id =  as the folder of fits you want to use
-load_in_fit_parameters <- load_best_fit(id = "8KpwNo")
+load_in_fit_parameters <- load_best_fit(id = "D42n2a0W")
 
 #We are subsetting to only the values we fit, becasue these are what we want to explore in the LHC process
 LHC_these <- load_in_fit_parameters %>%
@@ -44,25 +39,18 @@ model_data <- prepare_data_for_model(
                        1 - 0.353,
                        1 - 0.353,
                        4/3),
-  #Specify the number of LHC samples
-  sd_variation = .25,
-  number = 10,
+  #Specify the number of LHC samples and the variation of sampling
+  sd_variation = .25,  #How much variation you want from the starting value, .25 would indicate values could be 25% higher or lower than the value specified in LHC_param_values                                            
+  number = 5,          #How many samples you want to run for - the larger the number the more certainty
+  #How we want to assign the "missing" cases we are calculating from the case ascertainment data
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties
   county_or_total = "county")
 
-#Benchmark
-benchmark_data <- model_data$full_pulse_data %>%
-  subset(state == "Washington" &
-           indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
-  group_by(phase, time_period) %>%
-  mutate(time_period_end_date = mdy(time_period_end_date),
-         time_period_start_date = mdy(time_period_start_date),
-         yearmonth = yearmonth(median(c(time_period_end_date, time_period_start_date ))))
-
-#Run model
+#Load model
 model <- odin("odin/long_covid_model_stochastic_county.R")
 
+#Run model
 model_results <- run_odin_model(model_data = model_data,
                            adult_population = ((1 - 0.217) * 7656200))
 

@@ -1,14 +1,11 @@
 
-fit_odin_model <- function(odin_model, 
-                           parameters_to_fit,
-                           starting_values,
-                           lower_limits,
-                           upper_limits,
+fit_odin_model <- function(odin_model,
+                           parameter_fit_dataframe,
                            weights = 1){
   
   #Set up inputs
-  fit_these <- c(starting_values)
-  names(fit_these) <- parameters_to_fit
+  fit_these <- c(parameter_fit_dataframe$starting_values)
+  names(fit_these) <- parameter_fit_dataframe$parameters_to_fit
   
   #Setting a random seed and then setting the seed as 1 to generate a random string and then start fitting from the same place
   set.seed(runif(1, min = 1, max = 10000000))
@@ -27,8 +24,8 @@ fit_odin_model <- function(odin_model,
     fn = least_squares_fit,
     method  = "L-BFGS-B",
     # control = list(),
-    lower = lower_limits,
-    upper = upper_limits,
+    lower = parameter_fit_dataframe$lower_limits,
+    upper = parameter_fit_dataframe$upper_limits,
     odin_model = odin_model,
     benchmark_weights = weights,
     random_string = random_string

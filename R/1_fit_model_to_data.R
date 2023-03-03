@@ -34,30 +34,6 @@ model_setup <- prepare_data_for_model(
 #Set up system
 model <- odin("odin/long_covid_model_stochastic_county.R")
 
-#Set up benchmark data
-benchmark_data <- model_setup$full_pulse_data %>%
-  subset(state == "Washington" & 
-           indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
-  group_by(time_period) %>%
-  mutate(pulse = paste0("Survey ", time_period),
-         middle_date = mean(c(mdy(time_period_end_date), mdy(time_period_start_date))),
-         yearmonth = yearmonth(middle_date))
-
-#Plot of benchmark data
-ggplot(data = benchmark_data, 
-       aes(x = middle_date, 
-           y = value, 
-           ymin = low_ci, 
-           ymax = high_ci)) +
-  geom_point() +
-  geom_errorbar() +
-  theme_bw() +
-  labs(x = "",
-       y = "Population prevalence (%)",
-       title = "Population prevalence of long COVID in the total WA adult population")
-
-benchmark_weights <- c(1, 1, 1, 1, 1, 1, 0, 1, 1)
-
 #Set up dataframe of what we want to fit
 default_values <- import(here("data", "raw", "parameter_values", "default_values.csv"))
 fit_these <- c("recovery_rate_non_hosp", 
@@ -66,11 +42,13 @@ fit_these <- c("recovery_rate_non_hosp",
                "permanent_hosp_prop",
                "omicron_long_covid_multiplier")
 
+#This specifies the names, starting values and lower and upper limits of the values
+#the fitting process will only choose values between the lower and upper limit
 param_fit_df <- data.frame(
-  parameters_to_fit = fit_these,
-  starting_values = as.numeric(default_values[fit_these]),
-  lower_limits = c(1/12, 1/24, 0.02, 0.08, 0.2),
-  upper_limits = c(1/2, 1/6, 0.12, 0.24, 0.6)
+  parameters_to_fit = fit_these,                            #The parameters we want to fit
+  starting_values = as.numeric(default_values[fit_these]),  #The starting values
+  lower_limits = c(1/12, 1/24, 0.02, 0.08, 0.2),            #The lower limit the value could be
+  upper_limits = c(1/2, 1/6, 0.12, 0.24, 0.6)               #The upper limit 
 )
 
 #Run fitting
@@ -78,12 +56,7 @@ param_fit_df <- data.frame(
 #these are the model fits which contain information on the fit parameters and the sum of least squares
 #you can load in the best parameter set by using the function load_best_fit(id = ) where the id is the name of the folder you want to load
 #these are then fed into the function prepare_data_for_model at the next step
-
 fitting_results <- fit_odin_model(
-  odin_model = model, 
-  parameters_to_fit = param_fit_df$parameters_to_fit,
-  starting_values = param_fit_df$starting_values,
-  lower_limits = param_fit_df$lower_limits,
-  upper_limits = param_fit_df$upper_limits,
-  weights = benchmark_weights
+  odin_model = model,                      #The odin model
+  parameter_fit_dataframe = param_fit_df   #The dataframe of what to fit and the range of values to try
 )
