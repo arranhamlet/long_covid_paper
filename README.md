@@ -11,7 +11,7 @@ There are three main sections to using the model in this walkthrough, all found 
 
 # Fitting the model
 
-This is carried out using the file [1_fit_model_to_data.R](R/1_fit_model_to_data.R). The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optim()` from the **stats** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
+This is carried out using the file [1_fit_model_to_data.R](R/1_fit_model_to_data.R). The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optimr()` from the **optimr** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
 
 The results of this process are then saved and used in the next section.
 
