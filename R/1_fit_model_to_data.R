@@ -40,15 +40,16 @@ fit_these <- c("recovery_rate_non_hosp",
                "recovery_rate_hosp",
                "permanent_non_hosp_prop",
                "permanent_hosp_prop",
-               "omicron_long_covid_multiplier")
+               "omicron_long_covid_multiplier",
+               "hosp_longprob_multiplier")
 
 #This specifies the names, starting values and lower and upper limits of the values
 #the fitting process will only choose values between the lower and upper limit
 param_fit_df <- data.frame(
   parameters_to_fit = fit_these,                            #The parameters we want to fit
   starting_values = as.numeric(default_values[fit_these]),  #The starting values
-  lower_limits = c(1/12, 1/24, 0.02, 0.08, 0.2),            #The lower limit the value could be
-  upper_limits = c(1/2, 1/6, 0.12, 0.24, 0.6)               #The upper limit 
+  lower_limits = c(1/12, 1/24, 0.02, 0.08, 0.2, 1),         #The lower value limit of the variable you are fitting
+  upper_limits = c(1, 1/2, 0.12, 0.24, 0.6, 2)              #The upper value limit of the variable you are fitting
 )
 
 #Run fitting
