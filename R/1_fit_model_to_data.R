@@ -15,9 +15,9 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
                devtools,   #used to install packages 
                tsibble,    #used for yearweek
                optimr,     #for fitting
-               lhs,         #used to carry out latin hypercube sampling
-               gridExtra,
-               tidyverse  #a variety of packages for manipulating data 
+               lhs,        #used to carry out latin hypercube sampling
+               gridExtra,  #used for displaying tables on figures
+               tidyverse   #a variety of packages for manipulating data 
                
 )  
 

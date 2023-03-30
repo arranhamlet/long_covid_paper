@@ -14,7 +14,6 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
                                                          median(c(model_data$latin_hypercube$vaccination_impact_full[a], 1)), 
                                                          model_data$latin_hypercube$vaccination_impact_partial[a], 1), "*")
     
-    
     #Run model
     model_generator <- model$new(
       #Set up the dimensions of the model
