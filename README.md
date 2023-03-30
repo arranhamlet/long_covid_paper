@@ -43,7 +43,7 @@ These "missing" symptomatic cases are included in our model, but do not contain 
 
 <img src="figs/map_prevalence.jpg" width="550" height="400">
 
-<em>The relative prevalence of long COVID by county in Washington State at the final timepoint in the data.</em>
+<em> (A)The relative prevalence of long COVID by county in Washington State at the final timepoint in the data and (B) how this has varied over time by county. Counties are ordered from West (top) to East (bottom).</em>
 
 # Model description
 
