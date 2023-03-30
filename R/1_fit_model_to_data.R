@@ -36,6 +36,7 @@ model <- odin("odin/long_covid_model_stochastic_county.R")
 
 #Set up dataframe of what we want to fit
 default_values <- import(here("data", "raw", "parameter_values", "default_values.csv"))
+
 fit_these <- c("recovery_rate_non_hosp", 
                "recovery_rate_hosp",
                "permanent_non_hosp_prop",

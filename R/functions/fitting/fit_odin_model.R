@@ -8,11 +8,14 @@ fit_odin_model <- function(odin_model,
   names(fit_these) <- parameter_fit_dataframe$parameters_to_fit
   
   #Setting a random seed and then setting the seed as 1 to generate a random string and then start fitting from the same place
-  set.seed(runif(1, min = 1, max = 10000000))
+  set.seed(as.numeric(Sys.time()))
+  
   random_string <- paste(c(sample(c(LETTERS, letters), 4, replace = T), 
                            sample(0:9, 4, replace = T))[sample(1:8)], 
                          collapse = "")
   set.seed(1)
+  
+  message(paste0("Fitting ID: ", random_string))
   
   #Create folder
   fit_folder <- here("data", "processed", "fit_parameters", "individual_fits", random_string)

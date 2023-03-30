@@ -41,7 +41,7 @@ model_data <- prepare_data_for_model(
                        4/3),
   #Specify the number of LHC samples and the variation of sampling
   sd_variation = .25,  #How much variation you want from the starting value, .25 would indicate values could be 25% higher or lower than the value specified in LHC_param_values                                            
-  number = 5,          #How many samples you want to run for - the larger the number the more certainty
+  number = 10,          #How many samples you want to run for - the larger the number the more certainty
   #How we want to assign the "missing" cases we are calculating from the case ascertainment data
   unreported_assignment = "unknown",
   #Prepare the data as a state total or by individual counties

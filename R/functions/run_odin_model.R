@@ -54,7 +54,7 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
     #Clean model output
     cleaned_model_results <- clean_model_results(raw_case_data = model_data$cases,
                                                  model_results = model_ran,
-                                                 time_unit = paste0("year", "month"),
+                                                 time_unit = "yearmonth",
                                                  county_or_total = if(model_data$num_counties == 1) "total" else "county",
                                                  return = return)
     

@@ -10,7 +10,7 @@ plot_prevalence <- function(model_output, population, benchmark = F, benchmark_d
   plot_output <- ggplot() +
     geom_line(data = overall_data,
               aes(group = 1,
-                  x = as.Date(timestep),
+                  x = as.Date(timestep) + 30,
                   y = 100 * all_long_inc_perm/population),
               color = "#2c7fb8", linewidth = 1) +
     theme_bw() +
@@ -30,8 +30,8 @@ plot_prevalence <- function(model_output, population, benchmark = F, benchmark_d
                                indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
       group_by(time_period) %>%
       mutate(across(
-        .cols = ends_with("_date"),
-        .fns = ymd
+        .cols = c("time_period_start_date", "time_period_end_date"),
+        .fns = mdy
       )) %>%
       mutate(pulse = paste0("Survey ", time_period),
              middle_date = mean(c(time_period_end_date, time_period_start_date)))
