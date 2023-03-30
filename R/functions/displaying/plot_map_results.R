@@ -109,7 +109,8 @@ plot_map_results <- function(model_estimates,
   map_heatmap_plot <- ggarrange(county_prevalence, 
                                 county_heatmap, 
                                 widths = c(2, 1), 
-                                common.legend = T, 
+                                common.legend = T,
+                                labels = c("A", "B"),
                                 legend = "bottom")
   
   print(map_heatmap_plot)
