@@ -9,9 +9,11 @@ There are three main sections to using the model in this walkthrough, all found 
 2) Running the model
 3) Plotting the results
 
+Each stage is highly variable in how long it takes to complete, with model runs taking between 10 seconds and 10 minutes dependent on the processing power of the computer used.
+
 # Fitting the model
 
-This is carried out using the file [1_fit_model_to_data.R](R/1_fit_model_to_data.R). The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optim()` from the **stats** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
+This is carried out using the file [1_fit_model_to_data.R](R/1_fit_model_to_data.R). The user loads in the data and specifies the names of the parameters to fit, the starting, lower and upper values. The function `fitting_results()` takes in this data, and other background information, to utilise the function `optimr()` from the **optimr** package to fit the model the [least squares method](https://en.wikipedia.org/wiki/Least_squares). Model predictions are compared to the [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) to gauge the accuracy of the model. 
 
 The results of this process are then saved and used in the next section.
 
@@ -29,7 +31,7 @@ The final script, [3_plot_results.R](R/3_plot_results.R), uses several functions
 
 <img src="figs/case_hosp_long_data.jpg" width="600" height="300">
 
-<em>Input data and prevalence estimates of long COVID. (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.</em>
+<em> Input data and incidence and prevalence estimates of long COVID. (A) Estimated symptomatic infections, reported cases, hospitalizations, and estimated long COVID incidence over time. (B) Model predictions and [Househould Pulse Long COVID estimates](https://www.cdc.gov/nchs/covid19/pulse/long-covid.htm) point estimates of the prevalence of long COVID over time.</em>
 
 For the subgroup analysis we can only present **relative** estimates of prevalence. In order to account for temporally varying issues with surveillance we use infection estimates from a previously designed and implemented [mathematical model of COVID transmission](https://iazpvnewgrp01.blob.core.windows.net/source/2021-02/reports/pdf/Sustained_reductions_in_transmission_have_led_to_declining_COVID_19_prevalence_in_King_County_WA.pdf) used by the Washington State Department of Health. These estimates suggest that ~80% of symptomatic cases of COVID are not recorded, with this percent varying substantially over time.
 

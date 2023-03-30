@@ -46,7 +46,7 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
       #The change in the probability of developing long COVID with omicron dominance
       omicron_long_covid_multiplier = model_data$latin_hypercube$omicron_long_covid_multiplier[a],
       #Delay of infections/cases/hospitalizations to long COVID - 3 months as the household pulse survey
-      case_delay = 0)
+      case_delay = 3)
     
     #Run the model
     model_ran <- as.data.frame(model_generator$run(1:model_data$num_timepoints))

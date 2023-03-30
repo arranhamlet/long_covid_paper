@@ -1,2 +1,2 @@
-"recovery_rate_non_hosp","recovery_rate_hosp","permanent_non_hosp_prop","permanent_hosp_prop","omicron_long_covid_multiplier","vaccination_impact_full","vaccination_impact_partial","non_hosp_additional_mortality_long","hosp_additional_mortality_long","infection_longprob_multiplier","hosp_longprob_multiplier"
-0.242112385678444,0.11215331037136,0.0534112747273519,0.148058385698791,0.38497074561427,0.647,0.647,1,1,0.666666666666667,1.33333333333333
+"recovery_rate_non_hosp","recovery_rate_hosp","permanent_non_hosp_prop","permanent_hosp_prop","omicron_long_covid_multiplier","hosp_longprob_multiplier","vaccination_impact_full","vaccination_impact_partial","non_hosp_additional_mortality_long","hosp_additional_mortality_long","infection_longprob_multiplier"
+0.452583589419641,0.303163339270757,0.0935307595016861,0.170135123402107,0.303487373274758,1.41780056293266,0.647,0.647,1,1,0.666666667

@@ -8,46 +8,50 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   #Create a dataframe
   case_hosp <- data.frame(
     yearmonth = rep(these_dates[1:which(these_dates == date_till)], 4),
-    type = rep(c("Symptomatic infections", "Reported cases", "Hospitalizations", "Long COVID"), 
+    type = rep(c("Symptomatic Infections", "Reported Cases", "Hospitalizations", "Long COVID"), 
                each = length(these_dates[1:here_date])),
     value = c(model_data$case_ascertainment$infections_symptomatic,
               apply(model_data$raw_case_data, 6, sum)[1:here_date],
               apply(model_data$hospitalizations, 6, sum)[1:here_date],
               head(subset(model_run, county == "all" & age_group == "all")$mid_into_long_covid, here_date)),
-    low = c(rep(NA, here_date * 3), head(subset(model_run, county == "all" & age_group == "all")$low_into_long_covid, here_date)),
-    high = c(rep(NA, here_date * 3), head(subset(model_run, county == "all" & age_group == "all")$high_into_long_covid, here_date))
+    low = c(c(model_data$case_ascertainment$infections_symptomatic,
+              apply(model_data$raw_case_data, 6, sum)[1:here_date],
+              apply(model_data$hospitalizations, 6, sum)[1:here_date]), head(subset(model_run, county == "all" & age_group == "all")$low_into_long_covid, here_date)),
+    high = c(c(model_data$case_ascertainment$infections_symptomatic,
+               apply(model_data$raw_case_data, 6, sum)[1:here_date],
+               apply(model_data$hospitalizations, 6, sum)[1:here_date]), head(subset(model_run, county == "all" & age_group == "all")$high_into_long_covid, here_date))
   ) %>%
-    mutate(type = factor(type, levels = c("Symptomatic infections", "Reported cases", "Hospitalizations", "Long COVID")))
+    mutate(type = factor(type, levels = c("Symptomatic Infections", "Reported Cases", "Hospitalizations", "Long COVID")))
   
   
   #Cases and hospitalizations
   case_hosp_graph <- ggplot(data = case_hosp,
                             aes(x = as.Date(yearmonth) + 30,
-                                y = value,
+                                y = value/10000,
                                 group = type,
-                                ymin = low,
-                                ymax = high,
                                 color = type)) +
     geom_line(alpha = 0.75,
               linewidth = .75) +
-    geom_ribbon(aes(fill = type), alpha = 0.25) +
+    geom_ribbon(aes(fill = type,
+                    ymin = low/10000,
+                    ymax = high/10000), alpha = 0.25) +
     theme_bw() +
     labs(x = "",
-         y = "Monthly incidence",
+         y = "Monthly incidence (per 10,000)",
          color = "") +
     scale_y_continuous(labels = comma) +
     theme(legend.background = element_rect(fill = NA),
           legend.position = "none",
           plot.margin = unit(c(.25, .25, -.5, .25), "cm")) +
     scale_fill_manual(name = "",
-                      values = c("Symptomatic infections" = "#fee090",
-                                 "Reported cases" = "#fc8d59",
+                      values = c("Symptomatic Infections" = "#fee090",
+                                 "Reported Cases" = "#fc8d59",
                                  "Hospitalizations" = "#d73027",
                                  "Long COVID" = "#1f78b4"),
                       aesthetics = c("color", "fill")) +
     facet_wrap(~type, nrow = 1, scales = "free_y") +
     scale_x_date(limits = c(ymd("2020/01/01"),
-                            floor_date(Sys.Date(), "month")))
+                            ceiling_date(Sys.Date(), "month")))
   
   #State 
   state_total_long_COVID <- ggplot() +
@@ -56,7 +60,7 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
                             timestep %in% as.character(these_dates[1:here_date])),
               aes(x = as.Date(ym(timestep)) + 30,
                   y = 100 * mid_all_long_inc_perm/adult_population,
-                  color = "Model estimates (18+)"), aesthetic  = 1) +
+                  color = "Model estimates (18+)")) +
     geom_ribbon(data = subset(subset(model_run, age_group == "18+"), 
                               timestep %in% as.character(these_dates[1:here_date])),
                 aes(x = as.Date(ym(timestep)) + 30,
@@ -78,26 +82,25 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
     geom_point(data = symptom_prevalence,
                aes(x = mean_date,
                    y = value,
-                   color = "Household pulse estimates (18+)")) +
+                   color = "Household pulse survey estimates (18+)")) +
     geom_errorbar(data = symptom_prevalence,
                   aes(x = mean_date,
                       y = value,
                       ymin = low_ci,
                       ymax = high_ci,
-                      color = "Household pulse estimates (18+)")) +
+                      color = "Household pulse survey estimates (18+)")) +
     scale_fill_manual(name = "",
                       values = c("Model estimates (18+)" = "#1f78b4",
-                                 "Household pulse estimates (18+)" = "black",
+                                 "Household pulse survey estimates (18+)" = "black",
                                  "Model estimates (all)" = "#a6cee3"),
                       aesthetics = c("color", "fill")) +
     scale_x_date(limits = c(ymd("2020/01/01"),
-                            floor_date(Sys.Date(), "month")))
+                            ceiling_date(Sys.Date(), "month")))
   
   input_prevalence_plot <- ggarrange(case_hosp_graph, 
                                      state_total_long_COVID, 
                                      ncol = 1, 
                                      heights = c(1, 1.25),
-                                     align = "v", 
                                      labels = c("A", "B"))
   
   print(input_prevalence_plot)
