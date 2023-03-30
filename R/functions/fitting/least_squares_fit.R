@@ -67,6 +67,7 @@ least_squares_fit <- function(par,
     left_join(gather(default_values, value = "default_values"), by = "key") %>%
     select(date_time, weights, key, default_values, value, sum_least_squares, final_longcovid_number)
   
+  #Export the fit 
   write.csv(save_fit,
             here("data", "processed", "fit_parameters", "individual_fits", random_string,
                  paste0("individual_fit_",
