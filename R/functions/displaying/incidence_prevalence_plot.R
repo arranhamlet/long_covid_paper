@@ -1,7 +1,7 @@
 
 incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   
-  date_till <- yearmonth(Sys.Date()) - 1
+  date_till <- yearmonth(Sys.Date())
   these_dates <- yearmonth(ym(dimnames(model_data$raw_case_data)[[6]]))
   here_date <- which(these_dates == date_till)
   

@@ -14,7 +14,8 @@ plot_map_results <- function(model_estimates,
     left_join(state_demography_data %>% 
                 filter(data_type == "Max. Total Population" & category == "0-4") %>% 
                 dplyr::select(geography, value), 
-              by = c("county" = "geography")) %>%
+              by = c("county" = "geography"),
+              relationship = "many-to-many") %>%
     mutate(prevalence = mid_all_long_inc_perm/value) %>%
     mutate(county = paste0(county, " County"))
   
@@ -29,7 +30,8 @@ plot_map_results <- function(model_estimates,
                        geography != "State Total" & 
                        year == 2020 & 
                        category == "0-4"),
-              by = c("county" = "geography")) %>%
+              by = c("county" = "geography"),
+              relationship = "many-to-many") %>%
     mutate(prevalence = long_covid/value,
            relative = prevalence/median(prevalence),
            norm_prev = (relative - min(relative))/(max(relative) - min(relative)))
@@ -103,12 +105,15 @@ plot_map_results <- function(model_estimates,
                                 "2023 Jan",
                                 ""))
   
-  print(ggarrange(county_prevalence, 
-                  county_heatmap, 
-                  widths = c(2, 1), 
-                  common.legend = T, 
-                  legend = "bottom"))
+  #Combine plots
+  map_heatmap_plot <- ggarrange(county_prevalence, 
+                                county_heatmap, 
+                                widths = c(2, 1), 
+                                common.legend = T, 
+                                legend = "bottom")
   
-  list(county_prevalence, county_heatmap)
+  print(map_heatmap_plot)
+  
+  map_heatmap_plot
   
 }
