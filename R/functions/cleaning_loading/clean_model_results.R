@@ -1,11 +1,3 @@
-# age_group = "all"
-# sex = "all"
-# race = "all"
-# vaccination = "all"
-# timestep = "all"
-# county = "all"
-# column_subset = "long_non_hosp;long_hosp;permanent;into_long_covid"
-# time_unit = "yearweek"
 
 clean_model_results <- function(raw_case_data,
                                 model_results,
@@ -43,27 +35,41 @@ clean_model_results <- function(raw_case_data,
   }
   
   #Remove columns we dont use
-  column_names <- do.call(rbind, strsplit(gsub("]", "", colnames(these_columns)), ",|\\["))
-  column_names <- column_names[which(column_names[, 1] %in% paste(strsplit(column_subset, ";")[[1]])), ]
+  column_names <- do.call(rbind, strsplit(gsub("]", "", colnames(these_columns)), ",|\\[")) 
+  colnames(column_names) <- c("variable", "age_group", "sex", "race", "vaccination", "county")
+  
+  column_names_upd <- column_names[which(column_names[, 1] %in% paste(strsplit(column_subset, ";")[[1]])), ] %>%
+    as.data.frame() %>%
+    mutate(across(
+      .cols = age_group:county,
+      .fns = as.numeric
+    ))
+  
+  #Replace names
+  column_names_upd[, 2] <- all_names[[1]][column_names_upd[, 2]]
+  column_names_upd[, 3] <- all_names[[2]][column_names_upd[, 3]]
+  column_names_upd[, 4] <- all_names[[3]][column_names_upd[, 4]]
+  column_names_upd[, 5] <- all_names[[4]][column_names_upd[, 5]]
+  column_names_upd[, 6] <- all_names[[5]][column_names_upd[, 6]]
   
   #Use this function
   time_step_converted<- if(time_unit == "yearweek"){
     yearweek(all_names[[6]]) 
   } else if(time_unit == "yearmonth") yearmonth(ym(all_names[[6]]))
   
-  #Create new easy to read dataframe
-  easy_df <- as.data.frame(rbindlist(sapply(1:ncol(these_columns), function(x){
-    this_name <- column_names[x, ]
-    data.frame(age_group = all_names[[1]][as.numeric(this_name[2])],
-               sex = all_names[[2]][as.numeric(this_name[3])],
-               race = all_names[[3]][as.numeric(this_name[4])],
-               vaccination = all_names[[4]][as.numeric(this_name[5])],
-               county = all_names[[5]][as.numeric(this_name[6])],
-               data_type = this_name[1],
-               timestep = time_step_converted,
-               value = these_columns[, x])
-  }, simplify = FALSE)))
+  #Duplicate each row to the number of time steps to easily fill in df
+  column_names_dupe <- column_names_upd[rep(seq_len(nrow(column_names_upd)), each = length(time_step_converted)), ]
   
+  #Create a new and easy to read dataframe
+  easy_df <- data.frame(age_group = column_names_dupe[, 2],
+                            sex = column_names_dupe[, 3],
+                            race = column_names_dupe[, 4],
+                            vaccination = column_names_dupe[, 5],
+                            county = column_names_dupe[, 6],
+                            data_type = column_names_dupe[, 1],
+                            timestep = rep(time_step_converted, nrow(column_names)),
+                            value = as.numeric(unlist(these_columns)))
+
   if(return == "all"){
     overall_df <- easy_df %>%
       group_by(data_type, timestep) %>%
