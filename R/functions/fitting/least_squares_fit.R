@@ -26,18 +26,19 @@ least_squares_fit <- function(par,
     mutate(prev = 100 * all_long_inc_perm/over_18_pop)
   
   #Set up dataframe
-  benchmark_data <- subset(prepare_data_for_model_object$full_pulse_data,
+  benchmark_data_table <- subset(prepare_data_for_model_object$full_pulse_data,
                            state == "Washington" &
                            indicator == "Currently experiencing long COVID, as a percentage of all adults") %>%
     mutate(across(
       .cols = ends_with("_date"),
            .fns = mdy)) %>%
+    group_by(time_period_label) %>%
     mutate(yearmonth = yearmonth(median(c(time_period_start_date,
                                           time_period_end_date))))
   
-  data_prediction <- data.frame(data = benchmark_data$value,
+  data_prediction <- data.frame(data = benchmark_data_table$value,
                                 prediction = subset(cleaned_model_results,
-                                                    as.character(timestep) %in% as.character(benchmark_data$yearmonth))$prev) %>%
+                                                    as.character(timestep) %in% as.character(benchmark_data_table$yearmonth))$prev) %>%
     mutate(difference = data - prediction)
   
   sum_least_squares <- sum(data_prediction$difference^2 * benchmark_weights)
@@ -48,7 +49,7 @@ least_squares_fit <- function(par,
   #Plot
   print(plot_prevalence(model_output = cleaned_model_results,
                         benchmark = T,
-                        benchmark_data = benchmark_data,
+                        benchmark_data = prepare_data_for_model_object$full_pulse_data,
                         population = over_18_pop) +
           labs(subtitle = paste0("Sum of Least Squares: ", round(sum_least_squares, 2))) +
           theme(legend.position = "none") +
