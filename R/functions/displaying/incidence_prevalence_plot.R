@@ -1,11 +1,12 @@
 
 incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   
+  #Define dates
   date_till <- yearmonth(Sys.Date())
   these_dates <- yearmonth(ym(dimnames(model_data$raw_case_data)[[6]]))
   here_date <- which(these_dates == date_till)
   
-  #Create a dataframe
+  #Create a dataframe of infections, cases, hospitalization and long COVID incidence
   case_hosp <- data.frame(
     yearmonth = rep(these_dates[1:which(these_dates == date_till)], 4),
     type = rep(c("Symptomatic Infections", "Reported Cases", "Hospitalizations", "Long COVID"), 
@@ -97,6 +98,7 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
     scale_x_date(limits = c(ymd("2020/01/01"),
                             ceiling_date(Sys.Date(), "month")))
   
+  #Combine plots
   input_prevalence_plot <- ggarrange(case_hosp_graph, 
                                      state_total_long_COVID, 
                                      ncol = 1, 

@@ -6,7 +6,7 @@ plot_map_results <- function(model_estimates,
   #This turns off exess information (not warnings or messages) that dplyr outputs
   options(dplyr.summarise.inform = FALSE)
   
-  #Process dataframe
+  #Process dataframe to contain the information we want to plot
   median_long <- model_estimates %>%
     group_by(county, timestep) %>%
     summarise(across(c(mid_into_long_covid:high_all_long_inc_perm), ~sum(., na.rm = T))) %>%
@@ -19,10 +19,12 @@ plot_map_results <- function(model_estimates,
     mutate(prevalence = mid_all_long_inc_perm/value) %>%
     mutate(county = paste0(county, " County"))
   
+  #What is the data at the final timepoint
   agg_last_timepoint <- subset(model_estimates, county != "NA" & county != "all" & county != "NA" & timestep == max(timestep)) %>%
     group_by(county) %>%
     summarise(long_covid = sum(mid_all_long_inc_perm))
   
+  #This combines model estimates and state demography so we can estimate county specific relative prevalences
   last_timestep <-  agg_last_timepoint %>%
     mutate(county = gsub(" County", "", county)) %>%
     left_join(subset(state_demography_data, 
