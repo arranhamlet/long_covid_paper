@@ -1,17 +1,3 @@
-# LHC_param_names = c("permanent_non_hosp_prop",
-#                     "permanent_hosp_prop",
-#                     "recovery_rate_non_hosp",
-#                     "recovery_rate_hosp",
-#                     "omicron_long_covid_multiplier")
-# LHC_param_values = c(subset(load_in_fit_parameters, grepl("permanent_non_hosp_prop", parameter))$fitted_value,
-#                      subset(load_in_fit_parameters, grepl("permanent_hosp_prop", parameter))$fitted_value,
-#                      1/subset(load_in_fit_parameters, grepl("recovery_rate_non_hosp", parameter))$fitted_value,
-#                      1/subset(load_in_fit_parameters, grepl("recovery_rate_hosp", parameter))$fitted_value,
-#                      subset(load_in_fit_parameters, grepl("omicron", parameter))$fitted_value)
-# number = 1
-# county_or_total = "total"
-# sd_variation = 0.2
-
 prepare_data_for_model <- function(LHC_param_names = NA, 
                                    LHC_param_values = NA,
                                    fit_object = NA,
@@ -48,7 +34,7 @@ prepare_data_for_model <- function(LHC_param_names = NA,
   actual_case_data <- readRDS(max(all_files[grepl("data/nonhosp_case", all_files)]))
   actual_hosp_data <- readRDS(max(all_files[grepl("data/hosp_case", all_files)]))
   
-  #Load in actual case data
+  #If the country_or_total is set to total, this collapses the county data to a single dimension
   if(county_or_total == "total"){
     
     #We want to retain the county dimenson, but with 1 entry, so we need to reconfigure the array
@@ -75,7 +61,7 @@ prepare_data_for_model <- function(LHC_param_names = NA,
   
   raw_case_data <- actual_case_data
   
-  #Account for unreported infections
+  #Account for unreported infections by adding in cases to the NA dimension
   for(i in 1:last(dim(actual_case_data))){
     increase_by <- case_ascertainment$symptomatic_missed[i]
     if(is.na(increase_by)) increase_by <- 0
@@ -86,16 +72,16 @@ prepare_data_for_model <- function(LHC_param_names = NA,
     }
   }
 
-  counties <- dim(actual_case_data)[5]
-
   #Set up system
   num_timepoints <- last(dim(actual_case_data))
   num_age_groups <- dim(actual_case_data)[1]
   num_sex <- dim(actual_case_data)[2]
   num_race_groups <- dim(actual_case_data)[3]
   num_vaccine_groups <- dim(actual_case_data)[4]
+  num_counties <- dim(actual_case_data)[5]
   
-  #Set up age and race matrix
+  #Set up age and race matrix - this takes all the information from the Household Pulse survey on age, sex, race/ethnicity and creates
+  #a 5D array of probabilities of developing long COVID.
   age_long_data <- filter(symptom_prevalence, time_period_end_date == max(time_period_end_date) & group == "By Age")$value/100
   sex_long_data <- rev(filter(symptom_prevalence, time_period_end_date == max(time_period_end_date) & group == "By Sex")$value/100) #Reversing to match the case data
   race_long_data <- filter(symptom_prevalence, time_period_end_date == max(time_period_end_date) & group == "By Race/Hispanic ethnicity")$value/100
@@ -129,9 +115,6 @@ prepare_data_for_model <- function(LHC_param_names = NA,
   #We are setting up a Latin Hypercube to sample from in order to efficiently 
   #sample a range of potential parameter combinations
   set.seed(1)
-  
-  time <- "month"
-  time_adjust <- if(time == "month") 30 else if(time == "week") 7 else if(time == "day") 1
   
   #Set up LHC values for sampling
   if(!all(is.na(LHC_param_values))){
@@ -168,6 +151,7 @@ prepare_data_for_model <- function(LHC_param_names = NA,
                              row.names = NULL)
   }
   
+  #All the information we want to output
   list(  num_timepoints = num_timepoints,
          num_age_groups = num_age_groups,
          num_sex = num_sex,
@@ -179,7 +163,7 @@ prepare_data_for_model <- function(LHC_param_names = NA,
          cases = actual_case_data,
          hospitalizations = actual_hosp_data,
          age_sex_race_vaccination_array = age_sex_race_vaccination_array,
-         bd = 1/(life_expectancy_matrix * if(time == "month") 12 else if(time == "week") 52 else if(time == "day") 365),
+         bd = 1/(life_expectancy_matrix * 12),
          latin_hypercube = latin_hypercube,
          time_omicron_switch = min(which(grepl("2022", last(dimnames(actual_case_data))))),
          full_pulse_data = symptom_prevalence_raw,
