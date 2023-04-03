@@ -70,6 +70,7 @@ clean_model_results <- function(raw_case_data,
                             timestep = rep(time_step_converted, nrow(column_names)),
                             value = as.numeric(unlist(these_columns)))
 
+  #Create summary dataframes to add for total population and those over 18
   if(return == "all"){
     overall_df <- easy_df %>%
       group_by(data_type, timestep) %>%

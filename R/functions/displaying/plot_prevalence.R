@@ -1,5 +1,6 @@
 plot_prevalence <- function(model_output, population, benchmark = F, benchmark_data = F){
   
+  #Subset model data to the same information that is reported in the Household Pulse survey
   overall_data <- subset(model_output,
                          age_group == "18+" &
                            sex == "all" &
