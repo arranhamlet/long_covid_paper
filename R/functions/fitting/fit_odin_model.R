@@ -23,8 +23,8 @@ fit_odin_model <- function(odin_model,
   
   #Fit model
   optimr(
-    par = fit_these,
-    fn = least_squares_fit,
+    par = fit_these,                                  #These are the parameters we want to vary in order to fit the model
+    fn = least_squares_fit,                           #This is the function used to fit the model
     method  = "L-BFGS-B",
     lower = parameter_fit_dataframe$lower_limits,
     upper = parameter_fit_dataframe$upper_limits,
