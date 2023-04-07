@@ -24,13 +24,6 @@ pacman::p_load(odin,       #This is the package that contains the language odin 
 #Load functions
 invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), function(x) source(x)))
 
-#Data process
-model_setup <- prepare_data_for_model(
-  #How to assign unreported cases
-  unreported_assignment = "unknown",
-  #Prepare the data as a state total or by individual counties
-  county_or_total = "total")
-
 #Set up system
 model <- odin("odin/long_covid_model_stochastic_county.R")
 
