@@ -64,7 +64,11 @@ year_week_average <- model_results %>%
                                       high = ~calculate_ci(., output = "cihigh")),
                           .names = "{.fn}_{.col}"))
 
-#Export results
-write.csv(year_week_average,
-       here("data", "processed", "model_estimates", paste0(if(model_data$num_counties == 1) "total" else "county", "_model_run_", gsub("-", "", Sys.Date()), ".csv")),
-       row.names = FALSE)
+#Save as a gzip for size
+fwrite(year_week_average %>%
+         mutate(timestep = as.character(timestep)),
+       paste0("data/processed/model_predictions/county_model_run_", gsub("-", "", Sys.Date()), ".gz"),
+       compress = "gzip")
+
+
+

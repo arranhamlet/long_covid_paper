@@ -44,7 +44,9 @@ symptom_prevalence <- symptom_prevalence_raw %>%
                             time_period_end_date)))
 
 #Load in model estimates - this will load the file with the latest date
-model_estimates <- import(max(list.files(here("data", "processed", "model_estimates"), pattern = "county", full.names = T)))
+model_estimates <- fread(max(list.files(here("data", "processed", "model_predictions"), 
+                                         pattern = "county", 
+                                         full.names = T)))
 
 #Load in raw data
 model_data <- prepare_data_for_model()

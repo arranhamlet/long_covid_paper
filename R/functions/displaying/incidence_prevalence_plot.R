@@ -7,18 +7,21 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   here_date <- which(these_dates == date_till)
   
   #Create a dataframe of infections, cases, hospitalization and long COVID incidence
+  infection_data <- model_data$case_ascertainment$infections_symptomatic
+  if(length(infection_data) != here_date) infection_data <- c(infection_data, rep(NA, here_date - length(infection_data)))
+  
   case_hosp <- data.frame(
     yearmonth = rep(these_dates[1:which(these_dates == date_till)], 4),
     type = rep(c("Symptomatic Infections", "Reported Cases", "Hospitalizations", "Long COVID"), 
                each = length(these_dates[1:here_date])),
-    value = c(model_data$case_ascertainment$infections_symptomatic,
+    value = c(infection_data,
               apply(model_data$raw_case_data, 6, sum)[1:here_date],
               apply(model_data$hospitalizations, 6, sum)[1:here_date],
               head(subset(model_run, county == "all" & age_group == "all")$mid_into_long_covid, here_date)),
-    low = c(c(model_data$case_ascertainment$infections_symptomatic,
+    low = c(c(infection_data,
               apply(model_data$raw_case_data, 6, sum)[1:here_date],
               apply(model_data$hospitalizations, 6, sum)[1:here_date]), head(subset(model_run, county == "all" & age_group == "all")$low_into_long_covid, here_date)),
-    high = c(c(model_data$case_ascertainment$infections_symptomatic,
+    high = c(c(infection_data,
                apply(model_data$raw_case_data, 6, sum)[1:here_date],
                apply(model_data$hospitalizations, 6, sum)[1:here_date]), head(subset(model_run, county == "all" & age_group == "all")$high_into_long_covid, here_date))
   ) %>%
@@ -26,19 +29,21 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   
   
   #Cases and hospitalizations
-  case_hosp_graph <- ggplot(data = case_hosp,
-                            aes(x = as.Date(yearmonth) + 30,
-                                y = value/10000,
+  incidence_graph <- ggplot(data = subset(case_hosp, type == "Long COVID"),
+                            aes(x = as.Date(yearmonth) + 0,
+                                y = value/1000,
                                 group = type,
+                                # fill = type,
+                                ymin = low/1000,
+                                ymax = high/1000,
                                 color = type)) +
     geom_line(alpha = 0.75,
               linewidth = .75) +
-    geom_ribbon(aes(fill = type,
-                    ymin = low/10000,
-                    ymax = high/10000), alpha = 0.25) +
+    geom_ribbon(aes(fill = type), alpha = 0.25) +
     theme_bw() +
     labs(x = "",
-         y = "Monthly incidence (per 10,000)",
+         
+         y = "Monthly incidence (1000s)",
          color = "") +
     scale_y_continuous(labels = comma) +
     theme(legend.background = element_rect(fill = NA),
@@ -50,9 +55,8 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
                                  "Hospitalizations" = "#d73027",
                                  "Long COVID" = "#1f78b4"),
                       aesthetics = c("color", "fill")) +
-    facet_wrap(~type, nrow = 1, scales = "free_y") +
     scale_x_date(limits = c(ymd("2020/01/01"),
-                            ceiling_date(Sys.Date(), "month")))
+                            floor_date(Sys.Date(), "month")))
   
   #State 
   state_total_long_COVID <- ggplot() +
@@ -99,11 +103,10 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
                             ceiling_date(Sys.Date(), "month")))
   
   #Combine plots
-  input_prevalence_plot <- ggarrange(case_hosp_graph, 
-                                     state_total_long_COVID, 
-                                     ncol = 1, 
-                                     heights = c(1, 1.25),
-                                     labels = c("A", "B"))
+  input_prevalence_plot <- ggarrange(state_total_long_COVID,
+                                     incidence_graph,
+                                     labels = c("A", "B"),
+                                     ncol = 1)
   
   print(input_prevalence_plot)
   
