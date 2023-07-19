@@ -37,7 +37,9 @@ recover_hosp <- 1 - permanent_hosp_prop #The proportion of hospitalized that rec
 permanent_hosp_prop <- user() #The proportion of hospitalized that are permanent
 
 recovery_rate_non_hosp <- user()#The rate at which non-hospitalized recover
-recovery_rate_hosp <- user()#The rate at which hospitalized recover 
+recovery_rate_hosp_multiplier <- user() 
+
+recovery_rate_hosp <- recovery_rate_non_hosp * 1/recovery_rate_hosp_multiplier #The rate at which hospitalized recover 
 
 
 # Set up flows between compartments ---------------------------------------
@@ -63,7 +65,7 @@ into_long_hosp[,,,,] <- rbinom(hospitalization[i, j, k, l, i5, as.integer(step)]
 #Set up out flow from long_hosp
 leaving_long_hosp[,,,,] <- rbinom(long_hosp[i, j, k, l, i5], recovery_rate_hosp * recover_hosp + permanent_hosp_prop + bd[i, j] * hosp_additional_mortality_long)
 leaving_long_hosp_death[,,,,] <- rbinom(leaving_long_hosp[i, j, k, l, i5], (bd[i, j] * hosp_additional_mortality_long)/(recovery_rate_hosp * recover_hosp + permanent_hosp_prop + bd[i, j] * hosp_additional_mortality_long))
-leaving_long_hosp_recovery[,,,,] <- delay(rbinom(leaving_long_hosp[i, j, k, l, i5] - leaving_long_hosp_death[i, j, k, l, i5], (recovery_rate_hosp * recover_hosp)/(recovery_rate_hosp * recover_hosp + permanent_hosp_prop)), case_delay)
+leaving_long_hosp_recovery[,,,,] <- delay(rbinom(leaving_long_hosp[i, j, k, l, i5] - leaving_long_hosp_death[i, j, k, l, i5], (recovery_rate_hosp * recover_hosp)/(recovery_rate_non_hosp * 1/recovery_rate_hosp * recover_hosp + permanent_hosp_prop)), case_delay)
 leaving_long_hosp_permanent[,,,,] <- delay(leaving_long_hosp[i, j, k, l, i5] - leaving_long_hosp_death[i, j, k, l, i5] - leaving_long_hosp_recovery[i, j, k, l, i5], case_delay)
 
 # Model equations ---------------------------------------------------------

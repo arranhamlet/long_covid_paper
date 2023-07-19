@@ -27,23 +27,19 @@ invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), func
 #Set up system
 model <- odin("odin/long_covid_model_stochastic_county.R")
 
-#Set up dataframe of what we want to fit
-default_values <- import(here("data", "raw", "parameter_values", "default_values.csv"))
-
+#Specify what parameters we want to fit
 fit_these <- c("recovery_rate_non_hosp", 
-               "recovery_rate_hosp",
+               "recovery_rate_hosp_multiplier",
                "permanent_non_hosp_prop",
-               "permanent_hosp_prop",
-               "omicron_long_covid_multiplier",
-               "hosp_longprob_multiplier")
+               "permanent_hosp_prop")
 
 #This specifies the names, starting values and lower and upper limits of the values
 #the fitting process will only choose values between the lower and upper limit
 param_fit_df <- data.frame(
   parameters_to_fit = fit_these,                            #The parameters we want to fit
-  starting_values = as.numeric(default_values[fit_these]),  #The starting values
-  lower_limits = c(1/12, 1/24, 0.04, 0.12, 0.2, 1),         #The lower value limit of the variable you are fitting
-  upper_limits = c(1, 1/2, 0.12, 0.24, 0.6, 2)              #The upper value limit of the variable you are fitting
+  starting_values = c(1/3, 1.5, 0.06, 0.16),                #The starting values
+  lower_limits =    c(1/6, 1, 0.04, 0.14),                  #The lower value limit of the variable you are fitting
+  upper_limits =    c(2, 2, 0.08, 0.20)                     #The upper value limit of the variable you are fitting
 )
 
 #Run fitting

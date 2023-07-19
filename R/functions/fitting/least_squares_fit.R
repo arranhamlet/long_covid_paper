@@ -64,6 +64,8 @@ least_squares_fit <- function(par,
                             ymax = 6))
   
   #Save data
+  default_values <- import(here("data", "raw", "parameter_values", "default_values.csv"))
+  
   save_fit <- gather(prepare_data_for_model_object$latin_hypercube) %>% 
     mutate(date_time = Sys.time(),
            sum_least_squares = sum_least_squares,
