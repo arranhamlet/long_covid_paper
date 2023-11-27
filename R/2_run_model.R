@@ -24,7 +24,7 @@ invisible(sapply(list.files("R/functions/", full.names = T, recursive = T), func
 #specifiy id =  as the folder of fits you want to use
 load_in_fit_parameters <- load_best_fit(id = "53cN0uM8")
 
-#We are subsetting to only the values we fit, becasue these are what we want to explore in the LHC process
+#We are subsetting to only the values we fit, because these are what we want to explore in the LHC process
 LHC_these <- load_in_fit_parameters %>%
   subset(which_fit == T)
 
@@ -43,9 +43,11 @@ model_data <- prepare_data_for_model(
                        4/3),
   #Specify the number of LHC samples and the variation of sampling
   sd_variation = .25,  #How much variation you want from the starting value, .25 would indicate values could be 25% higher or lower than the value specified in LHC_param_values                                            
-  number = 10,          #How many samples you want to run for - the larger the number the more certainty
-  unreported_assignment = "unknown", #How we want to assign the "missing" cases we are calculating from the case ascertainment data
-  county_or_total = "county") #Prepare the data as a state total or by individual counties
+  number = 100,          #How many samples you want to run for - the larger the number the more certainty
+  #How we want to assign the "missing" cases we are calculating from the case ascertainment data
+  unreported_assignment = "unknown",
+  #Prepare the data as a state total or by individual counties
+  county_or_total = "county")
 
 #Load model
 model <- odin("odin/long_covid_model_stochastic_county.R")
