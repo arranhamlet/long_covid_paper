@@ -1,0 +1,12 @@
+"date_time","weights","key","default_values","value","sum_least_squares","final_longcovid_number"
+2023-07-19 10:22:03,"1","recovery_rate_non_hosp",0.25,0.334333333333333,65.3050761081899,214543
+2023-07-19 10:22:03,"1","recovery_rate_hosp_multiplier",1,1.5,65.3050761081899,214543
+2023-07-19 10:22:03,"1","permanent_non_hosp_prop",0.06,0.06,65.3050761081899,214543
+2023-07-19 10:22:03,"1","permanent_hosp_prop",0.16,0.16,65.3050761081899,214543
+2023-07-19 10:22:03,"1","omicron_long_covid_multiplier",0.303,0.303,65.3050761081899,214543
+2023-07-19 10:22:03,"1","hosp_longprob_multiplier",1.369,1.369,65.3050761081899,214543
+2023-07-19 10:22:03,"1","vaccination_impact_full",0.647,0.647,65.3050761081899,214543
+2023-07-19 10:22:03,"1","vaccination_impact_partial",0.647,0.647,65.3050761081899,214543
+2023-07-19 10:22:03,"1","non_hosp_additional_mortality_long",1,1,65.3050761081899,214543
+2023-07-19 10:22:03,"1","hosp_additional_mortality_long",1,1,65.3050761081899,214543
+2023-07-19 10:22:03,"1","infection_longprob_multiplier",0.666666667,0.666666667,65.3050761081899,214543

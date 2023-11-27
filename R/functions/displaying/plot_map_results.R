@@ -24,7 +24,7 @@ plot_map_results <- function(model_estimates,
     group_by(county) %>%
     summarise(long_covid = sum(mid_all_long_inc_perm))
   
-  #This combines model estimates and state demography so we can estimate county specific relative prevalences
+  #This combines model estimates and county demography so we can estimate county specific relative prevalences
   last_timestep <-  agg_last_timepoint %>%
     mutate(county = gsub(" County", "", county)) %>%
     left_join(subset(state_demography_data, 
@@ -38,7 +38,6 @@ plot_map_results <- function(model_estimates,
            relative = prevalence/median(prevalence),
            norm_prev = (relative - min(relative))/(max(relative) - min(relative)))
   
-
   last_timestep$id <- as.character(1:nrow(last_timestep))
   
   #Fortify shape for ggplot2

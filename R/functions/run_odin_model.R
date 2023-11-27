@@ -40,7 +40,7 @@ run_odin_model <- function(model_data, adult_population, return = "all", plot = 
       permanent_hosp_prop = model_data$latin_hypercube$permanent_hosp_prop[a],
       #The rate at which individuals recover from long COVID 
       recovery_rate_non_hosp = model_data$latin_hypercube$recovery_rate_non_hosp[a],
-      recovery_rate_hosp = model_data$latin_hypercube$recovery_rate_hosp[a],
+      recovery_rate_hosp_multiplier = model_data$latin_hypercube$recovery_rate_hosp_multiplier[a],
       #The time when omicron lineages became dominant
       time_omicron_switch = model_data$time_omicron_switch,
       #The change in the probability of developing long COVID with omicron dominance
