@@ -34,14 +34,6 @@ demog_data <- import(here("data", "processed", "demographic", "demographic_data_
 
 #Load and clean Symptom prevalence
 symptom_prevalence_raw <- import(here("data", "processed", "demographic", "long_covid_prevalence_by_group_data_processed.csv"))
-symptom_prevalence <- symptom_prevalence_raw %>%
-  subset(indicator == "Currently experiencing long COVID, as a percentage of all adults" &
-           subgroup == "Washington") %>%
-  mutate(across(contains("date"),
-                .fns = mdy)) %>%
-  group_by(time_period) %>%
-  mutate(mean_date = mean(c(time_period_start_date,
-                            time_period_end_date)))
 
 #Load in model estimates - this will load the file with the latest date
 model_estimates <- fread(max(list.files(here("data", "processed", "model_predictions"), 

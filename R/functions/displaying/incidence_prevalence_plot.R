@@ -6,6 +6,16 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
   these_dates <- yearmonth(ym(dimnames(model_data$raw_case_data)[[6]]))
   here_date <- which(these_dates == date_till)
   
+  #Extract and clean pulse data
+  pulse_data_clean <- symptom_prevalence_raw %>%
+    subset(indicator == "Currently experiencing long COVID, as a percentage of all adults" &
+             subgroup == "Washington") %>%
+    mutate(across(contains("date"),
+                  .fns = mdy)) %>%
+    group_by(time_period) %>%
+    mutate(mean_date = mean(c(time_period_start_date,
+                              time_period_end_date)))
+  
   #Create a dataframe of infections, cases, hospitalization and long COVID incidence
   infection_data <- model_data$case_ascertainment$infections_symptomatic
   if(length(infection_data) != here_date) infection_data <- c(infection_data, rep(NA, here_date - length(infection_data)))
@@ -84,11 +94,11 @@ incidence_prevalence_plot <- function(model_run, model_data, adult_population){
     theme(legend.position = c(.25, 0.6),
           legend.background = element_rect(fill = NA),
           plot.margin = unit(c(-.5, .25, 0, .25), "cm")) + 
-    geom_point(data = symptom_prevalence,
+    geom_point(data = pulse_data_clean,
                aes(x = mean_date,
                    y = value,
                    color = "Household pulse survey estimates (18+)")) +
-    geom_errorbar(data = symptom_prevalence,
+    geom_errorbar(data = pulse_data_clean,
                   aes(x = mean_date,
                       y = value,
                       ymin = low_ci,
