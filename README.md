@@ -51,7 +51,7 @@ These "missing" symptomatic cases are included in our model, but do not contain 
 
 ![Model diagram showing the progression between states](img/diagram.gif)
 
-<em>Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments L<sub>NH</sub> and L<sub>H</sub> respectively. These progress to either recovered, R, or unrecovered, U with the probability α<sub>NH</sub> and α<sub>H</sub> or β<sub>NH</sub> or β<sub>H</sub> respectively.</em>
+<em> Diagram of the mathematical model for the progression of post–COVID-19 condition (PCC). Abbreviations: bd, background death rate; H, hospitalized; NH, nonhospitalized; R, recovered; U, unrecovered; α, the proportion moving to the recovered compartment; β, the proportion moving to the unrecovered compartment; ρ, the probability of a case or hospitalization developing PCC
 
 Here we use a stochastic compartmental model to estimate the burden of long COVID. Each compartment contains 8 age categories, 5 race/ethnicity groups, 3 vaccination categories and 2 sexes, as well as an unknown category for missing information for each group. This results in 162 sub compartments per compartment. The number of sub-compartments within each compartment is due to the available data on cases and hospitalizations, and probabilities of long COVID. 
 
