@@ -47,7 +47,7 @@ These "missing" symptomatic cases are included in our model, but do not contain 
 
 # Model description
 
-![Model diagram showing the progression between states](img/diagram.jpg)
+![Model diagram showing the progression between states](img/diagram.gif)
 
 <em>Model diagram showing the progression between states. Non-hospitalized cases (longcase) and Hospitalized cases (longhosp) enter the acute long COVID compartments L<sub>NH</sub> and L<sub>H</sub> respectively. These progress to either recovered, R, or unrecovered, U with the probability α<sub>NH</sub> and α<sub>H</sub> or β<sub>NH</sub> or β<sub>H</sub> respectively.</em>
 
